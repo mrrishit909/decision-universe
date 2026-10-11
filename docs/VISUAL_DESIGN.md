@@ -42,12 +42,12 @@ These are inputs to the design. The design does not choose them.
   - **Planned:** P08 concentric population rings settling onto a county map (purple with light blue); P09 rotating cohort rings, shrinking arcs and a radial basket network (Spectral with orange-red).
 - **Cross-project review note (2026-10-11).** Every site from P04 on sets its own accent pair, and the "frame-filling radial disc with a lower-left headline" composition (P04 and P05 both use it) is not to be repeated. P10's S00 headline sits **top-left**, never lower-left, and the giant form is offset right (section 3.3).
 - **The plan's identity collides.** "A central decision orb branching into a radial probability field" is P02's orb at the centre and a P04/P05-style radial field around it. Rendered from real seeded futures (`bloom-s00-d.png`), it reads at contact scale as a glowing blue-violet orb in a dim disc with a lower-left headline: rejected (section 2).
-- **Data contracts read on 2026-10-11** (commit `2b9b117`, "Contracts: problem, sources, data contracts and artifact schemas"): `docs/DATA_CONTRACTS.md`, `docs/PROBLEM.md` and 13 schemas in `data/contracts/`. The schemas fix the **top-level** keys only; inner objects (`spec`, `environment`, `nsw`, `dag`, `front` ...) are free-form and documented in prose. Section 6 binds to the top-level names and asks for every inner key as a numbered data request (DR-n).
+- **Data contracts read on 2026-10-11** (commit `2b9b117`): `docs/DATA_CONTRACTS.md`, `docs/PROBLEM.md` and 13 schemas in `data/contracts/`, which fix top-level keys only. The **published artifacts** (`site/public/data/*.json`, commit `b50e0fc`, "Build status: data passed") were then read field by field; section 6 binds to their real inner keys and asks only for what is missing (DR-1 to DR-7).
 - **What the reference code says** (untracked `analytics/` work in progress, read only, never edited):
   - PRNG: xoshiro128** seeded by splitmix32 x4; `uniform()` 53 bits from two u32; `normal()` Box-Muller with a one-value cache (`analytics/rng.py`). Master seed 20261011 (`pipelines/common.py`).
   - The hero environment is m03's **project NPV** (`analytics/mc.py`), SYNTHETIC, USD millions, 8 years, cash at year end: investment I lognormal(ln 100, 0.15); first-year revenue N(48, 8); growth triangular(-0.02, 0.06, 0.15); margin N(0.35, 0.05); discount rate U(0.07, 0.12). NPV = -I + sum of discounted cash.
   - **My computation, not a binding** (seed 20261011, n 20,000, the reference `run`): mean NPV 11.09 M, SD 32.39, SE 0.229, 95% CI of the mean 10.64 to 11.54, P(loss) 0.3798, p05 -38.87, p50 9.34, p95 67.17. In the 2,500-future sketch, 61.6% complete the turn (pay back) within 8 years.
-  - **My computation, not a binding** (NSW Dehejia-Wahba, read from `data/raw` into memory only): experimental difference in mean 1978 earnings, treated minus control, 1,794.34 USD (185 vs 260); the naive comparison with 2,490 PSID controls is -15,204.78 USD. The page binds DR-9, never these.
+  - **My computation, not a binding** (NSW Dehejia-Wahba, read from `data/raw` into memory only): experimental difference in mean 1978 earnings, treated minus control, 1,794.34 USD (185 vs 260); the naive comparison with 2,490 PSID controls is -15,204.78 USD. The page binds `m10.nsw.benchmark.estimate` (1,794.34, it agrees) and `m10.nsw.observational_estimators`, never these.
   - German Credit: cost matrix 5 (bad approved) : 1 (good rejected), theoretical calibrated threshold 1/6 (`analytics/credit.py` docstring); test set 250 (DATA_CONTRACTS).
 - **Honesty rules from the brief and PROBLEM.md** (binding on every view):
   1. Seeded environments are SYNTHETIC, labelled from the first S00 frame. The only OBSERVED data are NSW/PSID earnings (module 10) and German Credit (modules 6 and 9).
@@ -338,7 +338,7 @@ Footer line on this scene: `EVERYTHING ELSE ON THIS SITE IS SYNTHETIC AND SEEDED
 
 #### S03a Mechanism I: how many futures are enough (250vh, 5 steps)
 
-- The Turn at G2. Steps n = 100, 1,000, 5,000, 20,000 (the published run) and 100,000 (`m03.convergence`, precomputed, labelled). Drawn threads cap at the tier's count; the ledger says `{{n_drawn}} DRAWN · STATISTICS FROM ALL {{n}}`.
+- The Turn at G2. Steps n = 100, 1,000, 10,000, 100,000 (`m03.convergence` prefixes; up to 20,000 recomputed live, 100,000 labelled PRECOMPUTED) and the 20,000 published run (section 6 adjustments). Drawn threads cap at the tier's count; the ledger says `{{n_drawn}} DRAWN · STATISTICS FROM ALL {{n}}`.
 - Ledger (left column): mean, SE, the 95% CI of the mean as brackets on a horizontal NPV ruler (no axis box: three numbers under it), P(loss). `100 x THE FUTURES, 10 x NARROWER` when n goes 1,000 → 100,000 (bound to the table).
 - **Insight:** the spread of futures does not shrink with more draws; only the uncertainty about the average does. Copy says exactly that.
 - **Reset:** n 20,000.
@@ -369,12 +369,12 @@ Footer line on this scene: `EVERYTHING ELSE ON THIS SITE IS SYNTHETIC AND SEEDED
 #### S06 Consequences: what you trade, what matters (300vh)
 
 - **S06a Trade-offs** (p 0-0.5): the Pareto front (`m07.front`) as luminous white points in an unboxed plane (objective names in words at the two ends), the two anchors violet. **Control (P):** EPSILON slider → a live HiGHS solve in the worker; the new point lands with its status word and `SOLVED IN YOUR BROWSER · HiGHS`; parity against `m07.vectors`.
-- **S06b What matters** (p 0.5-1): Ishigami (a = 7, b = 0.1): three inputs as three angles (their domain is [-π, π]); total variance as one filled violet column split into S1, S2, S3 and the interaction share; analytic values (`m08.analytic`) as white ticks, estimates by N (`m08.sobol`) as confidence brackets. **Control (P):** N stepper re-runs Saltelli live in the worker (`RUNNING IN YOUR BROWSER · SEED`).
+- **S06b What matters** (p 0.5-1): Ishigami (a = 7, b = 0.1): three inputs as three angles (their domain is [-π, π]); total variance as one filled violet column split into S1, S2, S3 and the interaction share; analytic values (`m08.analytic`) as white ticks, estimates by N (`m08.sobol`) as one 1px tick per seeded replicate (section 6). **Control (P):** N stepper re-runs Saltelli live in the worker (`RUNNING IN YOUR BROWSER · SEED`).
 - **Tags:** SYNTHETIC/DERIVED.
 
 #### S07 Evidence: the future you didn't choose (300vh)
 
-- p 0-0.55 **The unchosen.** One white vertical line: `EXPERIMENTAL BENCHMARK (NSW, RANDOMISED) {{benchmark}} USD` with its CI brackets. Each observational estimator (`m10.nsw`, DR-9: naive PSID, regression adjustment, IPW, ...) as a short white hairline with bootstrap CI brackets, stacked downward, each printing `GAP {{gap}} USD`. The DAG (`m10.dag`) to the left in mono words and straight hairlines; `m10.assumptions` listed under it. **Control (P):** ESTIMATOR selector highlights one row and its assumptions; SAMPLE: NSW CONTROLS / PSID CONTROLS; a SYNTHETIC CONFOUNDED WORLD toggle (`m10.synthetic`) where the true effect is known.
+- p 0-0.55 **The unchosen.** One white vertical line: `EXPERIMENTAL BENCHMARK (NSW, RANDOMISED) {{benchmark}} USD` with its CI brackets. Each observational estimator (`m10.nsw.observational_estimators`: naive, OLS, regression adjustment, IPW; names and assumptions by DR-7) as a short white hairline with bootstrap CI brackets, stacked downward, each printing `GAP {{gap}} USD`. The DAG (`m10.dag`) to the left in mono words and straight hairlines; `m10.assumptions` listed under it. **Control (P):** ESTIMATOR selector highlights one row and its assumptions; SAMPLE: NSW CONTROLS / PSID CONTROLS; a SYNTHETIC CONFOUNDED WORLD toggle (`m10.synthetic`) where the true effect is known.
 - p 0.6-1 **Argument stack** (7 exchanges, objection then answer): "Is this just random?" (seeds, parity counts); "Credible or confidence?"; "Is the model's counterfactual a cause?"; "Does the observational estimate work?" (the gaps); "Are the numbers checked?" (`validation.checks` passed count, `failures_recorded` verbatim); "Is any of this real?" (OBSERVED vs SYNTHETIC); "Who made the data?" (citations).
 - **Tags:** OBSERVED/DERIVED (NSW), SYNTHETIC (synthetic world).
 
@@ -453,39 +453,44 @@ No U+2014 or U+2015 anywhere; no "AI", "smart", "intelligent", "predicts the fut
 
 ## 6. Placeholder bindings and data requests
 
+Bound against the published artifacts in `site/public/data/` at commit `b50e0fc` ("Build status: data passed"), read on 2026-10-11. The data phase already satisfied most of what this design needs; the requests below are only what is still missing.
+
 ### 6.1 Bindings
 
 | Placeholder | Source | Status |
 |---|---|---|
-| Seed, sources, citations, licence note, limitations, module index | `meta.{seed, sources, citations, licence_note, limitations, modules}` | EXISTS (citation content: DR-10) |
-| Every copy number | `facts.facts[id].{value, unit, tag}` | EXISTS (ids: DR-11) |
+| Seed, sources, citations (NBER page and the three papers, UCI DOI, Ishigami, Saltelli, Blackman and Vigna), licence note, limitations, module index | `meta.{seed, sources, citations, licence_note, limitations, modules}` | EXISTS |
+| Copy numbers (mean NPV, P(loss), credit costs and thresholds, Ishigami S1/ST3, NSW benchmark and gaps, Pareto count) | `facts.facts[id]` (`mc_mean_npv`, `mc_p_loss`, `credit_*`, `ishigami_*`, `nsw_*`, `pareto_points`) | EXISTS (more ids: DR-5) |
 | PRNG spec and first values | `m02.{spec, seed, first_1000_u32, uniform_first, normal_first, seed_vectors}` | EXISTS |
-| Distributions | `m01.{cases, checks}` | EXISTS |
-| Hero run, convergence, histogram | `m03.{environment, run, convergence, histogram, vectors}` | EXISTS (paths and decisions: DR-1, DR-2) |
-| Bayes cases, sequential path, coverage | `m04.{beta_binomial, normal_normal, sequential, coverage}` | EXISTS (interval kinds: DR-3) |
-| Forecast series, fits, intervals, coverage | `m05.{series, fits, intervals, coverage}` | EXISTS (keys: DR-4) |
-| Credit test set, curve, optimum, splits, reliability | `m06.{test.p_bad, test.y_bad, curve, optimum, repeated_splits, reliability}` | EXISTS (cost matrix fields: DR-5) |
-| Pareto | `m07.{problem, anchors, front, vectors}` | EXISTS (keys: DR-6) |
-| Sobol | `m08.{analytic, sobol, oat, quadrature_check}` | EXISTS (constants: DR-7) |
-| Counterfactuals | `m09.{model, features, applicants, results}` | EXISTS (labels: DR-8) |
-| Causal | `m10.{dag, assumptions, nsw, synthetic}` | EXISTS (keys: DR-9) |
-| Validation | `validation.{checks, failures_recorded}` | EXISTS |
+| Distributions and their normalization checks | `m01.{cases, checks}` | EXISTS |
+| Hero environment, run, convergence (n = 100, 300, 1,000, 3,000, 10,000, 30,000, 100,000), histogram, vectors, the CI wording | `m03.{environment, run, convergence, histogram, vectors, spec.ci_is, spec.label}` | EXISTS (paths and decisions: DR-1, DR-2) |
+| Bayes cases, sequential path (`cr_lo/cr_hi` credible, `ci_lo/ci_hi` confidence), exact coverage, interval words | `m04.{beta_binomial[].credible95, beta_binomial[].confidence95_wilson, normal_normal[].confidence95_z, sequential.path, coverage, spec.labels}` | EXISTS. The interval grammar is keyed on these names: `credible*` and `cr_*` draw bands; `confidence*` and `ci_*` draw brackets; the words come from `spec.labels` |
+| Forecast series, fits, intervals at 0.8 and 0.95, coverage by horizon (1-12, 2,000 replicates), the SES caveat | `m05.{series, fits, intervals.{ar1,ses}.{"0.8","0.95"}, intervals.holdout, coverage, spec.reading}` | EXISTS (kind word: DR-3) |
+| Credit test set, curve, optimum (grid optimum 0.10, theory 1/6, costs 0.576 / 0.604 / 1.092), repeated splits, reliability, cost matrix, dataset citation | `m06.{test, curve.points, optimum, repeated_splits, reliability, spec.cost_matrix, dataset}` | EXISTS |
+| Pareto problem, anchors, 21-point front, compromise | `m07.{problem, anchors, front, compromise_index, vectors}` | EXISTS (browser LP text: DR-4) |
+| Ishigami analytic indices, quadrature check, Sobol by N (256, 1,024, 4,096, 16,384) with replicates, OAT | `m08.{analytic, quadrature_check, sobol, oat, spec.function}` | EXISTS |
+| Counterfactual model, actionable and immutable features, 8 applicants, results at two targets (0.5 and 1/6) | `m09.{model, features, applicants, results[].targets, spec.statement}` | EXISTS (readable names: DR-6) |
+| DAG, assumptions, experimental benchmark, experimental and observational estimators with CIs and gaps, balance, overlap (ESS of controls), synthetic world | `m10.{dag, assumptions, nsw.{benchmark, experiment_estimators, observational_estimators, balance, overlap, means}, synthetic, spec.link, spec.citations}` | EXISTS (per-estimator display: DR-7) |
+| Validation checks and recorded failures | `validation.{checks, failures_recorded}` | EXISTS |
+
+**Scene adjustments forced by the real artifacts** (they override section 3.4 where they differ):
+- S03a steps are the published convergence prefixes n = 100, 1,000, 10,000, 100,000, plus the 20,000 run (a separate stream, labelled `THE PUBLISHED RUN`).
+- S05: the grid optimum is 0.10, below the calibrated theory 1/6; both marks are shown with `m06.repeated_splits.t_opt_median` and its IQR as the honest range. S05b shows both of each applicant's targets: the change that flips the default 0.5 decision and the change that reaches the cost-optimal 1/6.
+- S06b: `m08.sobol` publishes replicate means and SDs, not confidence intervals. The estimate spread is drawn as **one 1px tick per replicate** under each index (no bracket, which is the confidence mark), labelled `{{replicates}} SEEDED REPLICATES · N {{N}}`.
+- S07: the IPW row also prints `EFFECTIVE CONTROLS ≈ {{m10.nsw.overlap.ess_controls}} OF 2,490` (11.9 today): the estimate leans on a dozen people, and the page says so.
+- S04: `m05.tags.coverage` is SIMULATED, so the coverage counter's chip reads SIMULATED, and `m05.spec.reading` (SES ignores mean reversion) is quoted under the SES option.
 
 ### 6.2 Data requests
 
 | ID | Request | Why | Size |
 |---|---|---|---|
-| DR-1 | **Hero paths for parity.** `m03.paths`: for seed 20261011 and each DR-2 preset, the first 16 futures' `recovered[0..8]` (PVcash(t)/I at year ends, recovered[0] = 0), `investment`, `npv`, `payback_year` (first t where recovered ≥ 1, linear within the year, or null). Plus the rule in `m03.spec` | The Turn's angles must be tested against the reference, not my sketch | tiny |
-| DR-2 | **Decisions.** `m03.environment.decisions`: 3 presets with labels and parameter overrides (proposal: `BUILD NOW` = default; `PHASED` = investment 70 with revenue x0.75 in years 1-2; `DELAY ONE YEAR` = all cash shifted one year, investment discounted one year), the parameter ranges the LAB may expose, and the **common-random-numbers rule** (the five draws per future happen in the fixed order regardless of decision). Vectors per preset in `m03.vectors` | S01, LAB, S08; "same worlds, another decision" must be true by construction | tiny |
-| DR-3 | **Interval kinds.** In `m04` every interval object carries `kind` ∈ {`credible_equal_tailed`, `confidence_wilson`, `confidence_z`} and `level`; `coverage` rows name the kind | Interval grammar is keyed on kind, never inferred | none |
-| DR-4 | **Forecast keys.** `m05.intervals` per method and level: `kind: "prediction"`, horizon array, lo/hi; `m05.coverage`: per horizon and level `{covered, n, nominal}` | S04 counter | small |
-| DR-5 | **Cost matrix.** `m06.spec.cost = {c_fn: 5, c_fp: 1, source: "UCI German Credit documentation"}`; `m06.optimum = {threshold, cost, cost_at_0_5, threshold_theory: 0.1666666667}`; `m06.dataset.citation` | S05 reference marks and the editable default | none |
-| DR-6 | **Pareto keys.** `m07.problem.objectives` names and units; each `front` point `{epsilon, f1, f2, status}`; the LP text and its sha256 for browser parity (as P07) | S06a | small |
-| DR-7 | **Ishigami constants.** `m08.spec = {a: 7, b: 0.1, domain: [-π, π]}`; `m08.sobol` per N with bootstrap CI `{lo, hi}` per index | S06b brackets | small |
-| DR-8 | **Counterfactual labels.** Each `m09.results[i]` carries `label: "MODEL COUNTERFACTUAL"`, `changes: [{feature, from, to, display_name}]`, `immutable: [...]` and `p_bad_before/after` | S05b | none |
-| DR-9 | **Causal keys.** `m10.nsw.benchmark = {estimate, ci_lo, ci_hi, method: "difference in means, randomised"}`; `m10.nsw.estimators = [{id, name, sample: "PSID", estimate, ci_lo, ci_hi, gap_vs_benchmark, assumptions: [ids]}]`; `m10.dag = {nodes: [{id, label}], edges: [[from, to]]}`; `m10.synthetic.true_effect` | S07; the benchmark-beside-gap rule | small |
-| DR-10 | **Citations.** `meta.citations` includes Dehejia and Wahba (1999), Dehejia and Wahba (2002), LaLonde (1986), the NBER page URL, Hofmann (1994) UCI DOI, Ishigami and Homma (1990), Saltelli et al. (2008), Blackman and Vigna (2018); `meta.licence_note` names CC BY-NC for NSW-derived numbers and CC BY 4.0 for German Credit | Footer and S02 cards | none |
-| DR-11 | **Facts ids.** `m03_payback_share_8y`, `m03_loss_share`, `m03_median_payback_year` per preset; `m03_n`, `m03_mean`, `m03_se`; `m06_optimum_threshold`, `m06_cost_optimum`, `m06_cost_at_0_5`; `m10_benchmark`, `m10_naive_gap`; `validation_passed`, `validation_total`; `parity_vectors_total` | All copy numbers come from facts | tiny |
+| DR-1 | **Hero paths for parity.** `m03.paths`: for seed 20261011 and each DR-2 decision, the first 16 futures' `recovered[0..8]` (discounted cash so far over that future's investment, at year ends; `recovered[0] = 0`), `investment`, `npv`, `payback_year` (first t with recovered ≥ 1, linear within the year, or null); the rule text in `m03.spec.paths` | The Turn's angles are tested against the reference, not against my sketch | tiny |
+| DR-2 | **Decisions.** `m03.environment.decisions`: 3 presets with labels and parameter overrides (proposal: `BUILD NOW` = today's environment; `PHASED` = investment median 70 with first-year revenue x0.75; `DELAY ONE YEAR` = every cash flow one year later, investment discounted one year), the ranges the LAB may expose, and the **common-random-numbers rule** (each future draws its five inputs in the fixed order whatever the decision). Per decision: `run` summary, `payback_share_8y`, `median_payback_year`, and vectors | S01, THE LAB, S08: "same worlds, another decision" must be true by construction | small |
+| DR-3 | **Forecast kind.** `m05.intervals.kind = "prediction"` and `m05.spec.labels.prediction` (one sentence, like `m04.spec.labels`) | The third interval mark carries its own published words | none |
+| DR-4 | **Browser LP.** `m07.lp_text` (the CPLEX LP text per epsilon builder) and its sha256, and `status` on each front point, as P04/P07 did | S06a live HiGHS solve with parity | small |
+| DR-5 | **Facts ids.** `mc_payback_share_8y`, `mc_median_payback_year` (per decision), `mc_se`, `mc_n`, `mc_mean_n100000`, `validation_passed`, `validation_total`, `parity_vectors_total`, `nsw_ipw_ess_controls` | Every copy number comes from facts | tiny |
+| DR-6 | **Readable counterfactual names.** `m09.features.display`: plain-language names for every feature and category code (A61 → "savings under 100 DM", etc., from `german.doc`) | S05b must not print UCI codes | small |
+| DR-7 | **Estimator display.** `m10.nsw.estimator_info = {naive, ols_coef, ra_att, ipw_att: {name, assumptions: [indexes into m10.assumptions]}}` | S07 highlights the assumptions each estimator relies on | tiny |
 
 ---
 
