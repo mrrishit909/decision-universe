@@ -110,11 +110,62 @@ def m03():
     for seed, n in [(1, 500), (2, 2000), (3, 2000), (4, 5000), (SEED, 1000), (SEED + 7, 3000)]:
         xx = mc.run(seed, n); s = mc.summarize(xx)
         vecs.append({"seed": seed, "n": n, **{k: r(s[k], 10) for k in ("mean", "sd", "se", "ci95_lo", "ci95_hi", "p_loss", "p05", "p50", "p95")}, "first_5": rl(xx[:5])})
-    return {"tags": {"environment": "SYNTHETIC", "run": "SYNTHETIC", "convergence": "SYNTHETIC", "vectors": "SYNTHETIC"}, "tolerance": TOL(1e-8, 1e-9),
+    decisions, paths = m03_decisions(N, big, x)
+    return {"tags": {"environment": "SYNTHETIC", "run": "SYNTHETIC", "convergence": "SYNTHETIC", "vectors": "SYNTHETIC", "paths": "SYNTHETIC"}, "tolerance": TOL(1e-8, 1e-9),
             "spec": {"label": "SYNTHETIC seeded environment, not a forecast of any real project", "seed": SEED, "run_n": N, "convergence": "prefixes of one 100000-trial stream", "ci": "mean +- 1.959963984540054 se (normal approximation)", "ci_is": "confidence interval of the MEAN, not a range for a single outcome",
-                     "percentile": "type 7 (linear interpolation)", "coverage_check": {"reps": 300, "n": 500, "coverage": cover / 300}},
-            "environment": mc.ENV, "run": {"seed": SEED, **{k: r(v, 8) if isinstance(v, float) else v for k, v in run.items()}, "mean_n100000": r(big["mean"], 8)},
+                     "percentile": "type 7 (linear interpolation)", "coverage_check": {"reps": 300, "n": 500, "coverage": cover / 300},
+                     "paths": "recovered[t], t = 0..8 calendar years from today = PV(cash received through year t) / PV(investment); cash flow of project year s arrives at calendar year s + delay; recovered[0] = 0. payback_year = first t >= 1 with recovered[t] >= 1, linear within the year: (t-1) + (1 - rec[t-1])/(rec[t]-rec[t-1]); null if never within 8 years. Paths are the first 16 futures of the seed-20261011 stream, identical draws under every decision."},
+            "environment": {**mc.ENV, "decisions": decisions}, "paths": paths, "run": {"seed": SEED, **{k: r(v, 8) if isinstance(v, float) else v for k, v in run.items()}, "mean_n100000": r(big["mean"], 8)},
             "histogram": {"edges": edges, "counts": counts.tolist(), "n": N}, "convergence": conv, "vectors": vecs}
+
+
+def m03_decisions(N, big, x_build):
+    names = {"build_now": "BUILD NOW", "phased": "PHASED", "delay_one_year": "DELAY ONE YEAR"}
+    base = mc.run_detail(SEED, N, mc.PRESETS["build_now"])
+    presets, pths = [], {}
+    for pid, pre in mc.PRESETS.items():
+        det = mc.run_detail(SEED, N, pre)
+        npv = [d["npv"] for d in det]
+        sm = mc.summarize(npv)
+        pb = sorted(d["payback_year"] for d in det if d["payback_year"] is not None)
+        diff = np.array([a["npv"] - b["npv"] for a, b in zip(det, base)])
+        vecs = []
+        for seed, n in [(1, 500), (2, 2000), (3, 2000), (4, 5000), (SEED, 1000), (SEED + 7, 3000)]:
+            dd = mc.run_detail(seed, n, pre); ss = mc.summarize([d["npv"] for d in dd]); pp = sorted(d["payback_year"] for d in dd if d["payback_year"] is not None)
+            vecs.append({"seed": seed, "n": n, **{k: r(ss[k], 10) for k in ("mean", "sd", "se", "ci95_lo", "ci95_hi", "p_loss", "p05", "p50", "p95")}, "first_5": rl([d["npv"] for d in dd[:5]]),
+                         "payback_share_8y": r(len(pp) / n, 10), "median_payback_year": (r(mc.percentile(pp, 0.5), 10) if pp else None)})
+        presets.append({"id": pid, "label": names[pid], "overrides": {k: v for k, v in pre.items() if k != "label"}, "run": {"seed": SEED, **{k: r(v, 8) if isinstance(v, float) else v for k, v in sm.items()}},
+                        "payback_share_8y": r(len(pb) / N, 6), "median_payback_year": (r(mc.percentile(pb, 0.5), 6) if pb else None), "paid_back_n": len(pb),
+                        "vs_build_now": {"mean_diff": r(float(diff.mean()), 6), "se_diff": r(float(diff.std(ddof=1) / math.sqrt(N)), 6), "share_better": r(float((diff > 0).mean()), 4)}, "vectors": vecs})
+        pths[pid] = [{"index": i, "investment": r(d["investment"], 8), "npv": r(d["npv"], 8), "payback_year": (r(d["payback_year"], 8) if d["payback_year"] is not None else None), "recovered": rl(d["recovered"], 8)} for i, d in enumerate(det[:16])]
+    # checks
+    b = presets[0]
+    check("m03", "BUILD NOW decision run equals the pre-existing m03.run (same stream)", [b["run"]["mean"], r(mc.summarize(x_build[:N])["mean"], 8)], "equal", b["run"]["mean"] == r(mc.summarize(x_build[:N])["mean"], 8))
+    g = random_draws_equal()
+    check("m03", "common random numbers: future i has identical draws under every decision (by construction, draws precede the transform)", g, True, g)
+    ok = True
+    rng = Xoshiro128ss(SEED)
+    for i in range(200):
+        dr = mc.draw_inputs(rng); rdisc = 0.07 + 0.05 * dr[4]
+        ok &= abs(mc.evaluate(dr, mc.PRESETS["delay_one_year"])["npv"] - mc.evaluate(dr, mc.PRESETS["build_now"])["npv"] / (1 + rdisc)) < 1e-9
+    check("m03", "DELAY ONE YEAR npv = BUILD NOW npv / (1 + r) per future (200 futures)", ok, True, ok)
+    check("m03", "recovered[] monotone nondecreasing and recovered[0]=0 for all 16 x 3 published paths", True, True, all(p["recovered"][0] == 0 and all(p["recovered"][i + 1] >= p["recovered"][i] - 1e-12 for i in range(8)) for v in pths.values() for p in v))
+    check("m03", "payback_year null iff recovered[8] < 1 (published paths)", True, True, all((p["payback_year"] is None) == (p["recovered"][8] < 1) for v in pths.values() for p in v))
+    crn = ("Common random numbers: every future draws its five inputs in the fixed order [z_investment (normal), z_revenue (normal), u_growth (uniform), z_margin (normal), u_discount (uniform)] from one xoshiro128** stream, "
+           "whatever the decision. The decision only transforms the draws afterwards (investment median, revenue multiplier, delay). Future i is therefore the same simulated world under every decision.")
+    paths = {"seed": SEED, "n_futures": 16, "horizon_years": 8, "draw_order": ["z_investment", "z_revenue", "u_growth", "z_margin", "u_discount"],
+             "draws": [rl(list(d), 12) for d in _first_draws(16)], "decisions": pths}
+    return {"presets": presets, "crn_rule": crn, "lab_ranges": {"investment_median": [50.0, 150.0], "revenue_multiplier": [0.5, 1.2], "delay_years": [0, 2], "note": "ranges the LAB may expose; delay_years is an integer; checked only at the three presets"}}, paths
+
+
+def _first_draws(k):
+    g = Xoshiro128ss(SEED)
+    return [mc.draw_inputs(g) for _ in range(k)]
+
+
+def random_draws_equal():
+    a, b = Xoshiro128ss(SEED), Xoshiro128ss(SEED)
+    return all(mc.draw_inputs(a) == mc.draw_inputs(b) for _ in range(100))
 
 
 # ------------------------------------------------------------------ 4 bayes
@@ -188,10 +239,10 @@ def m05():
         vecs.append({"seed": seed, "n": nn, "mu": mu, "phi": phi, "sigma": sig, "x_last_3": rl(xs[-3:]), "ses": {k: r(a[k], 8) for k in ("alpha", "sse", "level", "sigma2")},
                      "ar1": {k: r(b[k], 8) for k in ("phi", "c", "mu", "sigma2")}, "forecast_ses": pack(a, forecast.ses_forecast), "forecast_ar1": pack(b, forecast.ar1_forecast)})
     return {"tags": {"series": "SYNTHETIC", "fits": "PREDICTED", "intervals": "PREDICTED", "coverage": "SIMULATED", "vectors": "SYNTHETIC"}, "tolerance": TOL(1e-7, 1e-8),
-            "spec": {"truth": {"mu": MU, "phi": PHI, "sigma": SIG}, "models": "analytics/forecast.py docstring", "coverage_study": f"{R} replicate series (numpy PCG64, seed {SEED}), n=120 train, horizons 1..12; precomputed, NOT reproduced by the browser",
+            "spec": {"labels": {"prediction": "A prediction interval is the range in which one single future observation is expected to fall with the stated probability, if the model is right; it is wider than a confidence interval for a mean and is not a credible interval."}, "truth": {"mu": MU, "phi": PHI, "sigma": SIG}, "models": "analytics/forecast.py docstring", "coverage_study": f"{R} replicate series (numpy PCG64, seed {SEED}), n=120 train, horizons 1..12; precomputed, NOT reproduced by the browser",
                      "reading": "SES ignores mean reversion so its long-horizon bands are mis-sized; the study reports that rather than hiding it"},
             "series": {"seed": SEED, "mu": MU, "phi": PHI, "sigma": SIG, "x": rl(x, 6), "n_train": 108}, "fits": {"ses": sf, "ar1": af},
-            "intervals": {"ses": pack(sf, forecast.ses_forecast), "ar1": pack(af, forecast.ar1_forecast), "holdout": rl(x[108:], 6)},
+            "intervals": {"kind": "prediction", "ses": pack(sf, forecast.ses_forecast), "ar1": pack(af, forecast.ar1_forecast), "holdout": rl(x[108:], 6)},
             "coverage": {"reps": R, "horizons": list(range(1, 13)), "nominal": [0.8, 0.95], **cov}, "vectors": vecs}
 
 
@@ -271,18 +322,31 @@ def m07():
     pmax, pmin = pts[-1]["profit"], pts[0]["profit"]; emin, emax = pts[0]["emissions"], pts[-1]["emissions"]
     dist = [math.hypot((pmax - p["profit"]) / (pmax - pmin), (p["emissions"] - emin) / (emax - emin)) for p in pts]
     kn = int(np.argmin(dist))
-    rp = lambda p: {"eps": r(p["eps"], 8), "profit": r(p["profit"], 8), "emissions": r(p["emissions"], 8), "x": rl([max(0.0, v) for v in p["x"]], 8)}
+    import hashlib
+    sha = lambda t: hashlib.sha256(t.encode()).hexdigest()
+    worst_txt = 0.0
+    for q in pts:
+        q["eps"] = r(q["eps"], 8)
+        t = lp.lp_text(P, P["b"][0], q["eps"]); st, ob = lp.solve_text(t)
+        q["status"] = "Optimal" if st == "Optimal" else st; q["lp_text_sha256"] = sha(t); worst_txt = max(worst_txt, abs(ob - q["profit"]))
+    check("m07", "every front point: HiGHS status of re-solving the published LP text is Optimal", [q["status"] for q in pts].count("Optimal"), len(pts), all(q["status"] == "Optimal" for q in pts))
+    check("m07", "LP-text solve objective equals front profit (rounded eps), max abs diff", worst_txt, 1e-5, worst_txt < 1e-5)
+    rp = lambda p: {"eps": r(p["eps"], 8), "profit": r(p["profit"], 8), "emissions": r(p["emissions"], 8), "x": rl([max(0.0, v) for v in p["x"]], 8), "status": p["status"], "lp_text_sha256": p["lp_text_sha256"]}
     vecs = []
     for labor in (160.0, 190.0, 220.0, 250.0):
         f = lp.front(P, 4, labor)
+        shas = []
+        for q in f["points"]:
+            t = lp.lp_text(P, labor, r(q["eps"], 8)); st, ob = lp.solve_text(t); shas.append(sha(t))
+            check("m07", f"labor {labor:g}: LP-text solve optimal and objective matches", [st, ob], q["profit"], st == "Optimal" and abs(ob - q["profit"]) < 1e-5)
         vecs.append({"labor_hours": labor, "e_lo": r(f["anchor_min_emissions"]["emissions"], 8), "e_hi": r(f["anchor_max_profit"]["emissions"], 8), "profit_at_e_lo": r(f["anchor_min_emissions"]["profit"], 8), "profit_at_e_hi": r(f["anchor_max_profit"]["profit"], 8),
-                     "eps_profit": [[r(p["eps"], 8), r(p["profit"], 8)] for p in f["points"]]})
+                     "eps_profit": [[r(p["eps"], 8), r(p["profit"], 8)] for p in f["points"]], "eps_sha256": shas})
     return {"tags": {"problem": "SYNTHETIC", "anchors": "DERIVED", "front": "DERIVED", "vectors": "DERIVED"}, "tolerance": TOL(1e-6, 1e-7, "objective values only; the optimal x may be non-unique at kinks"),
             "spec": {"method": "epsilon-constraint on a continuous LP; solver HiGHS (highspy here, highs-js in the browser)", "docstring": "analytics/lp.py", "grid": "21 epsilons (K=20) between the two lexicographic anchors", "compromise": "front point closest to the utopia corner in range-normalized units; one choice among many, not 'the' answer",
                      "cross_check": {"scipy_linprog_max_abs_profit_diff": worst}},
             "problem": {**P, "objectives": {"profit": "maximize", "emissions": "minimize"}, "constraint_note": "rows: A x <= b; plus sum(x) >= q_min; 0 <= x <= upper"},
             "anchors": {"max_profit": {k: (r(v, 8) if isinstance(v, float) else rl([max(0.0, t) for t in v], 8)) for k, v in fr["anchor_max_profit"].items()}, "min_emissions": {k: (r(v, 8) if isinstance(v, float) else rl([max(0.0, t) for t in v], 8)) for k, v in fr["anchor_min_emissions"].items()}},
-            "front": [rp(p) for p in pts] if len(pts) >= 5 else [], "compromise_index": kn, "vectors": vecs}
+            "front": [rp(p) for p in pts], "lp_text": {"format": "CPLEX LP; numbers %.10g (JS Number(v.toPrecision(10)).toString()); LF line ends; trailing LF; SHA-256 over UTF-8", "builder": lp.lp_text.__doc__, "example_point": 10, "example": lp.lp_text(P, P["b"][0], pts[10]["eps"]), "example_sha256": pts[10]["lp_text_sha256"]}, "compromise_index": kn, "vectors": vecs}
 
 
 # ------------------------------------------------------------------ 8 sensitivity
@@ -329,6 +393,17 @@ def m08():
 
 
 # ------------------------------------------------------------------ 9 counterfactual
+DISPLAY = {"source": "UCI Statlog German Credit documentation (german.doc), plain-language wording", "features": {
+    "duration": "loan duration (months)", "amount": "credit amount (DM)", "log_amount": "credit amount (DM, log scale)", "installment_rate": "installment rate (% of disposable income)", "age": "age (years)",
+    "existing_credits": "existing credits at this bank", "checking": "checking account", "savings": "savings account or bonds", "credit_history": "credit history", "employment": "present employment", "housing": "housing"},
+    "categories": {
+        "checking": {"A11": "under 0 DM", "A12": "0 to under 200 DM", "A13": "200 DM or more (or salary assignment for a year or more)", "A14": "no checking account"},
+        "savings": {"A61": "under 100 DM", "A62": "100 to under 500 DM", "A63": "500 to under 1000 DM", "A64": "1000 DM or more", "A65": "unknown or no savings account"},
+        "credit_history": {"A30": "no credits taken or all paid back duly", "A31": "all credits at this bank paid back duly", "A32": "existing credits paid back duly so far", "A33": "delay in paying off in the past", "A34": "critical account or credits elsewhere"},
+        "employment": {"A71": "unemployed", "A72": "under 1 year", "A73": "1 to under 4 years", "A74": "4 to under 7 years", "A75": "7 years or more"},
+        "housing": {"A151": "rent", "A152": "own", "A153": "for free"}}}
+
+
 def m09(df, parts):
     y = df["y_bad"].to_numpy()
     mdl = credit.fit_interpretable(df, parts["train"])
@@ -356,7 +431,7 @@ def m09(df, parts):
     return {"tags": {"model": "PREDICTED", "applicants": "OBSERVED", "results": "PREDICTED"}, "tolerance": TOL(1e-9, 1e-9, "p_bad values; changes must match exactly"),
             "spec": {"statement": "MODEL counterfactuals: the smallest input change that flips this fitted model's output. NOT causal; changing a feature in the real world need not change the outcome.", "search": "exhaustive grid, analytics/counterfactual.py docstring",
                      "targets": "0.5 (default decision) and 1/6 (cost-optimal threshold from module 6)", "share_found": r(foundshare, 3)},
-            "model": mdl_pub, "features": {"actionable": ["duration", "amount", "installment_rate", "checking", "savings"], "immutable": ["age", "credit_history", "employment", "housing", "existing_credits"],
+            "model": mdl_pub, "features": {"display": DISPLAY, "actionable": ["duration", "amount", "installment_rate", "checking", "savings"], "immutable": ["age", "credit_history", "employment", "housing", "existing_credits"],
                                            "candidates": {"duration": sorted(set(counterfactual.DURATIONS)), "amount_multiplier": counterfactual.MULTS, "installment_rate": counterfactual.INSTALL, "checking": credit.CAT9["checking"], "savings": credit.CAT9["savings"]}},
             "applicants": apps, "results": res}
 
@@ -368,6 +443,13 @@ COV = ["age", "education", "black", "hispanic", "married", "nodegree", "re74", "
 def design(d):
     X = d[COV].to_numpy(float)
     return np.column_stack([X, d["age"].to_numpy(float) ** 2, (d["re74"] == 0).to_numpy(float), (d["re75"] == 0).to_numpy(float)])
+
+
+ESTIMATOR_INFO = {
+    "naive": {"name": "Naive difference in means", "short": "treated mean minus comparison mean, no adjustment", "assumptions": [0, 2], "note": "Unbiased only if treatment is as good as random with no covariates (true in the NSW experiment, not for PSID); index 0 is then read without conditioning."},
+    "ols_coef": {"name": "OLS with covariates", "short": "coefficient on treatment in a linear model of 1978 earnings on covariates", "assumptions": [0, 2, 3], "note": "Also assumes one constant effect for everyone and linear covariate effects; extrapolates silently where groups do not overlap."},
+    "ra_att": {"name": "Regression adjustment", "short": "predict treated units' earnings without training from a model fitted on comparison units", "assumptions": [0, 1, 2, 3], "note": "Relies on the comparison-group model being right for the treated covariates; leans on extrapolation when overlap is weak."},
+    "ipw_att": {"name": "Inverse-probability weighting", "short": "reweight comparison units by the odds of looking like a treated unit (propensity score)", "assumptions": [0, 1, 2, 3], "note": "Correct only if the propensity model is right; with weak overlap a handful of comparison units carry most of the weight (see effective controls)."}}
 
 
 def m10():
@@ -438,7 +520,7 @@ def m10():
                             "SUTVA / consistency: no interference between participants and one version of treatment.",
                             "Correct specification: the outcome and propensity models are approximations; results are sensitive to them.",
                             "The experiment supports a causal reading only for the NSW volunteer population (external validity not established)."],
-            "nsw": {"benchmark": {"estimate": r(bench, 2), "se": r(se, 2), "ci95": [r(bench - 1.959964 * se, 2), r(bench + 1.959964 * se, 2)], "n_treated": int(tm.sum()), "n_control": int((~tm).sum()), "unit": "USD 1978", "tag": "OBSERVED/DERIVED",
+            "nsw": {"estimator_info": ESTIMATOR_INFO, "benchmark": {"estimate": r(bench, 2), "se": r(se, 2), "ci95": [r(bench - 1.959964 * se, 2), r(bench + 1.959964 * se, 2)], "n_treated": int(tm.sum()), "n_control": int((~tm).sum()), "unit": "USD 1978", "tag": "OBSERVED/DERIVED",
                                   "regression_adjusted_in_experiment": r(ee["ols_coef"], 2)},
                     "experiment_estimators": pack(ee, be), "observational_estimators": pack(eo, bo),
                     "observational_sample": {"n_treated": int(to.sum()), "n_psid_controls": int((~to).sum())},
@@ -458,7 +540,7 @@ def main():
         write_artifact(k, v)
     write_artifact("validation", {"tags": {"checks": "DERIVED"}, "checks": CHECKS, "failures_recorded": FAILURES})
     from pipelines.meta import build_meta
-    build_meta(arts)
+    build_meta(arts, sum(c["passed"] for c in CHECKS), len(CHECKS))
     print(f"{len(CHECKS)} checks, {len(FAILURES)} failures")
     for f in FAILURES: print("FAIL", f)
 

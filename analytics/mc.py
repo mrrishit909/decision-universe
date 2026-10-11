@@ -32,20 +32,55 @@ def tri_inv(u: float, a: float, c: float, b: float) -> float:
     return b - math.sqrt((1.0 - u) * (b - a) * (b - c))
 
 
-def npv_trial(rng: Xoshiro128ss) -> float:
-    inv = math.exp(math.log(100.0) + 0.15 * rng.normal())
-    r1 = 48.0 + 8.0 * rng.normal()
-    g = tri_inv(rng.uniform(), -0.02, 0.06, 0.15)
-    m = 0.35 + 0.05 * rng.normal()
-    r = 0.07 + 0.05 * rng.uniform()
-    pv = 0.0
-    cf = r1 * m
-    d = 1.0
-    for _ in range(8):
-        d *= 1.0 + r
-        pv += cf / d
+PRESETS = {
+    "build_now": {"label": "BUILD NOW", "investment_median": 100.0, "revenue_multiplier": 1.0, "delay_years": 0},
+    "phased": {"label": "PHASED", "investment_median": 70.0, "revenue_multiplier": 0.75, "delay_years": 0},
+    "delay_one_year": {"label": "DELAY ONE YEAR", "investment_median": 100.0, "revenue_multiplier": 1.0, "delay_years": 1},
+}
+HORIZON = 8  # calendar years shown for recovered[] / payback
+
+
+def draw_inputs(rng: Xoshiro128ss) -> tuple[float, float, float, float, float]:
+    """Common random numbers: the five raw draws of one future, in this fixed order, whatever the decision.
+    (z_investment normal, z_revenue normal, u_growth uniform, z_margin normal, u_discount uniform)"""
+    return rng.normal(), rng.normal(), rng.uniform(), rng.normal(), rng.uniform()
+
+
+def evaluate(d: tuple, pre: dict) -> dict:
+    """Decision transform of one future. recovered[t], t = 0..8 calendar years: PV(cash received through t) / PV(investment), both at today's value;
+    cash flow of project year s arrives at calendar year s + delay. payback_year = first t >= 1 with recovered >= 1, linear within the year, else None."""
+    zi, zr, ug, zm, ur = d
+    inv = math.exp(math.log(pre["investment_median"]) + 0.15 * zi)
+    r1 = pre["revenue_multiplier"] * (48.0 + 8.0 * zr)
+    g = tri_inv(ug, -0.02, 0.06, 0.15)
+    m = 0.35 + 0.05 * zm
+    r = 0.07 + 0.05 * ur
+    k = pre["delay_years"]
+    pv_inv = inv / (1.0 + r) ** k
+    cf, pv, cum = r1 * m, 0.0, [0.0]
+    for s in range(1, 9):
+        pv += cf / (1.0 + r) ** (s + k)
+        cum.append(pv)
         cf *= 1.0 + g
-    return -inv + pv
+    npv = pv - pv_inv
+    rec = [0.0] * (HORIZON + 1)
+    for t in range(k + 1, HORIZON + 1):
+        rec[t] = cum[t - k] / pv_inv
+    pay = None
+    for t in range(1, HORIZON + 1):
+        if rec[t] >= 1.0:
+            pay = (t - 1) + (1.0 - rec[t - 1]) / (rec[t] - rec[t - 1])
+            break
+    return {"investment": inv, "npv": npv, "recovered": rec, "payback_year": pay}
+
+
+def npv_trial(rng: Xoshiro128ss) -> float:
+    return evaluate(draw_inputs(rng), PRESETS["build_now"])["npv"]
+
+
+def run_detail(seed: int, n: int, pre: dict) -> list[dict]:
+    rng = Xoshiro128ss(seed)
+    return [evaluate(draw_inputs(rng), pre) for _ in range(n)]
 
 
 def run(seed: int, n: int) -> list[float]:

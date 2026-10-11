@@ -130,3 +130,39 @@ def test_build_is_byte_reproducible(art):
     write_artifact("m02_sampling", build.m02()); write_artifact("m03_montecarlo", build.m03())
     assert {p.name: p.read_bytes() for p in PUBLIC.glob("m0[2-3]*.json")}["m02_sampling.json"] == before["m02_sampling.json"]
     assert (PUBLIC / "m03_montecarlo.json").read_bytes() == before["m03_montecarlo.json"]
+
+
+def test_dr_decisions_crn_and_paths(art):
+    m = art("m03_montecarlo")
+    pre = m["environment"]["decisions"]["presets"]
+    assert [p["id"] for p in pre] == ["build_now", "phased", "delay_one_year"]
+    assert pre[0]["run"]["mean"] == m["run"]["mean"] and pre[0]["vectors"][1]["first_5"] == m["vectors"][1]["first_5"]
+    rng = Xoshiro128ss(20261011); d = mc.draw_inputs(rng)
+    assert m["paths"]["draws"][0] == [round(v, 12) for v in d]
+    for i in range(16):  # delay: invariant recovered share shifted by one year, NPV / (1+r)
+        a, b = m["paths"]["decisions"]["build_now"][i], m["paths"]["decisions"]["delay_one_year"][i]
+        assert b["recovered"][1] == 0 and all(abs(b["recovered"][t] - a["recovered"][t - 1]) < 1e-7 for t in range(2, 9))
+    ph = mc.evaluate(mc.draw_inputs(Xoshiro128ss(20261011)), mc.PRESETS["phased"])
+    assert abs(ph["npv"] - m["paths"]["decisions"]["phased"][0]["npv"]) < 1e-7
+
+
+def test_dr_labels_lp_display_estimators_facts(art):
+    assert art("m05_forecast")["intervals"]["kind"] == "prediction" and "single future observation" in art("m05_forecast")["spec"]["labels"]["prediction"]
+    m7 = art("m07_pareto")
+    assert all(q["status"] == "Optimal" and len(q["lp_text_sha256"]) == 64 for q in m7["front"])
+    import hashlib
+    assert hashlib.sha256(m7["lp_text"]["example"].encode()).hexdigest() == m7["lp_text"]["example_sha256"]
+    st, ob = lp.solve_text(m7["lp_text"]["example"])
+    assert st == "Optimal" and abs(ob - m7["front"][10]["profit"]) < 1e-5
+    disp = art("m09_counterfactual")["features"]["display"]["categories"]
+    assert disp["savings"]["A61"] == "under 100 DM" and set(disp["checking"]) == {"A11", "A12", "A13", "A14"}
+    info = art("m10_causal")["nsw"]["estimator_info"]; n = len(art("m10_causal")["assumptions"])
+    assert set(info) == {"naive", "ols_coef", "ra_att", "ipw_att"} and all(0 <= i < n for v in info.values() for i in v["assumptions"])
+    f = art("facts")["facts"]
+    assert f["validation_passed"]["value"] == f["validation_total"]["value"] == len(art("validation")["checks"])
+
+
+@pytest.mark.skipif(not shutil.which("node"), reason="node not installed")
+def test_lp_text_js_builder_matches_sha():
+    out = subprocess.run(["node", str(ROOT / "tests/parity/lp_text_check.mjs")], capture_output=True, text=True, check=True).stdout
+    assert json.loads(out)["mismatches"] == 0

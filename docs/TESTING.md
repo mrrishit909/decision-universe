@@ -1,6 +1,6 @@
 # Testing (data and reference layer)
 
-Run: `uv run pytest -q` (32 tests, about 11 s) and `uv run python -m pipelines.validate_artifacts`.
+Run: `uv run pytest -q` (35 tests) and `uv run python -m pipelines.validate_artifacts`.
 
 - Distributions vs scipy (pdf, cdf, quantile, poisson), normalization by quadrature, quantile-cdf round trip.
 - PRNG: hand-derived xoshiro vector; independent Node port reproduces the 1000-value artifact, extra seeds, uniforms and normals; KS test on normals.
@@ -10,3 +10,5 @@ Run: `uv run pytest -q` (32 tests, about 11 s) and `uv run python -m pipelines.v
 - Artifacts: JSON Schema validation, 400 KB gzip budget, no U+2014/U+2015, no raw .dta, byte-reproducible rebuild, zero recorded validation failures (44 checks in `validation.json`).
 
 Frontend parity tests (Vitest) are the next task and read the `vectors` in each artifact.
+
+P10-DATA-002 additions: common random numbers and the delay identity (NPV / (1 + r), recovered share shifted one year), published path draws, the LP text SHA-256 rebuilt independently in Node (`tests/parity/lp_text_check.mjs`) and re-solved with HiGHS, plus label, display-name, estimator-info and facts checks.

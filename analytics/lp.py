@@ -74,3 +74,43 @@ def front(p: dict, K: int, labor: float | None = None) -> dict:
         xs = np.array(x)
         pts.append({"eps": eps, "profit": obj, "emissions": float(np.dot(pp["emissions"], xs)), "x": x})
     return {"labor": pp["b"][0], "anchor_max_profit": hi, "anchor_min_emissions": lo, "points": pts}
+
+
+def _g(v: float) -> str:
+    return f"{v:.10g}"  # JS: Number(v.toPrecision(10)).toString(); all values here are 0 or in [1e-4, 1e10)
+
+
+def _terms(coefs: list[float]) -> str:
+    out = [("- " if c < 0 else "+ ") + f"{_g(abs(c))} x{j}" for j, c in enumerate(coefs) if c != 0]
+    s = " ".join(out)
+    return s[2:] if s.startswith("+ ") else s
+
+
+def lp_text(p: dict, labor: float, eps: float) -> str:
+    """CPLEX LP text of: max profit s.t. resource rows (labor rhs = `labor`), minimum output, emissions <= eps, 0 <= x <= upper.
+    Row order: r0 labor, r1 machine, r2 material, minout (-sum x <= -q_min), em (emissions <= eps). Variables x0..x4. Numbers %.10g. Lines end with LF."""
+    b = [labor] + list(p["b"][1:])
+    n = len(p["profit"])
+    L = ["Maximize", " obj: " + _terms(p["profit"]), "Subject To"]
+    for i, (row, rhs) in enumerate(zip(p["A"], b)):
+        L.append(f" r{i}: {_terms(row)} <= {_g(rhs)}")
+    L.append(f" minout: {_terms([-1.0] * n)} <= {_g(-p['q_min'])}")
+    L.append(f" em: {_terms(p['emissions'])} <= {_g(eps)}")
+    L.append("Bounds")
+    L += [f" 0 <= x{j} <= {_g(u)}" for j, u in enumerate(p["upper"])]
+    L.append("End")
+    return "\n".join(L) + "\n"
+
+
+def solve_text(text: str) -> tuple[str, float]:
+    import os, tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".lp", delete=False) as f:
+        f.write(text)
+    try:
+        h = highspy.Highs()
+        h.setOptionValue("output_flag", False)
+        h.readModel(f.name)
+        h.run()
+        return h.modelStatusToString(h.getModelStatus()), float(h.getInfo().objective_function_value)
+    finally:
+        os.unlink(f.name)

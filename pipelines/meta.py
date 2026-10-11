@@ -20,7 +20,7 @@ MODS = [("m01_distributions", "Distributions", "DERIVED", "Lanczos lgamma, incom
         ("m10_causal", "Causal", "OBSERVED/DERIVED", "NSW vs PSID; LaLonde 1986, Dehejia and Wahba 1999, 2002")]
 
 
-def build_meta(arts: dict) -> None:
+def build_meta(arts: dict, passed: int = 0, total: int = 0) -> None:
     man = json.loads((MANIFESTS / "raw_manifest.json").read_text())
     f = man["files"]
     lic = {"nsw_dw.dta": "CC by NC (attributable non-commercial use)", "psid_controls.dta": "CC by NC (attributable non-commercial use)", "german.data": "CC BY 4.0"}
@@ -40,6 +40,8 @@ def build_meta(arts: dict) -> None:
             "modules": [{"id": f"m{i+1:02d}", "name": n, "artifact": f"{a}.json", "tag": t, "reference": ref} for i, (a, n, t, ref) in enumerate(MODS)],
             "artifacts": [f"{n}.json" for n in names], "artifact_bytes": {}, "environment": {"python": sys.version.split()[0], "platform": platform.system()}}
     opt, nb = n6["optimum"], n10["nsw"]
+    d3 = n3["environment"]["decisions"]["presets"]
+    nvec = sum(len(a["vectors"]) for a in arts.values() if "vectors" in a) + sum(len(p["vectors"]) for p in d3) + len(arts["m02_sampling"]["seed_vectors"]) + len(arts["m01_distributions"]["cases"])
     F = lambda v, u, t, note="": {"value": v, "unit": u, "tag": t, "note": note}
     facts = {
         "nsw_benchmark_usd": F(nb["benchmark"]["estimate"], "USD 1978", "OBSERVED/DERIVED", "randomized difference in means"),
@@ -58,6 +60,14 @@ def build_meta(arts: dict) -> None:
         "credit_test_auc": F(n6["model"]["metrics_test_calibrated"]["auc"], "AUC", "PREDICTED"),
         "mc_mean_npv": F(n3["run"]["mean"], "USD M", "SYNTHETIC"), "mc_p_loss": F(n3["run"]["p_loss"], "share", "SYNTHETIC"),
         "ishigami_s1": F(arts["m08_sensitivity"]["analytic"]["S"][0], "index", "DERIVED"), "ishigami_st3": F(arts["m08_sensitivity"]["analytic"]["ST"][2], "index", "DERIVED"),
+        "mc_payback_share_8y": F(d3[0]["payback_share_8y"], "share", "SYNTHETIC", "BUILD NOW; discounted payback within 8 calendar years"),
+        "mc_payback_share_8y_phased": F(d3[1]["payback_share_8y"], "share", "SYNTHETIC"), "mc_payback_share_8y_delay_one_year": F(d3[2]["payback_share_8y"], "share", "SYNTHETIC", "window cuts the last project year"),
+        "mc_median_payback_year": F(d3[0]["median_payback_year"], "years from today", "SYNTHETIC", "BUILD NOW; median among futures that pay back within 8 years"),
+        "mc_median_payback_year_phased": F(d3[1]["median_payback_year"], "years from today", "SYNTHETIC"), "mc_median_payback_year_delay_one_year": F(d3[2]["median_payback_year"], "years from today", "SYNTHETIC"),
+        "mc_se": F(n3["run"]["se"], "USD M", "SYNTHETIC", "standard error of the mean NPV, n = 20000"), "mc_n": F(n3["run"]["n"], "futures", "SYNTHETIC"), "mc_mean_n100000": F(n3["run"]["mean_n100000"], "USD M", "SYNTHETIC", "mean NPV over the 100000-trial stream"),
+        "validation_passed": F(passed, "checks", "DERIVED", "pipeline checks passed (validation.json)"), "validation_total": F(total, "checks", "DERIVED"),
+        "parity_vectors_total": F(nvec, "vectors", "DERIVED", "entries in every vectors array incl. per-decision vectors, plus m02 seed_vectors and m01 cases"),
+        "nsw_ipw_ess_controls": F(nb["overlap"]["ess_controls"], "effective controls", "DERIVED", "of 2490 PSID controls"),
         "pareto_points": F(len(arts["m07_pareto"]["front"]), "points", "DERIVED"),
     }
     write_artifact("facts", {"tags": {"facts": "DERIVED"}, "facts": facts})
