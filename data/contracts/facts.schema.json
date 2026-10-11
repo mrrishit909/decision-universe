@@ -25,6 +25,21 @@
     ],
     "type": "object"
    },
+   "required": [
+    "mc_payback_share_8y",
+    "mc_payback_share_8y_phased",
+    "mc_payback_share_8y_delay_one_year",
+    "mc_median_payback_year",
+    "mc_median_payback_year_phased",
+    "mc_median_payback_year_delay_one_year",
+    "mc_se",
+    "mc_n",
+    "mc_mean_n100000",
+    "validation_passed",
+    "validation_total",
+    "parity_vectors_total",
+    "nsw_ipw_ess_controls"
+   ],
    "type": "object"
   },
   "generated_at": {

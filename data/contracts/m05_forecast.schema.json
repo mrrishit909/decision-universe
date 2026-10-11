@@ -12,6 +12,15 @@
    "type": "string"
   },
   "intervals": {
+   "additionalProperties": true,
+   "properties": {
+    "kind": {
+     "const": "prediction"
+    }
+   },
+   "required": [
+    "kind"
+   ],
    "type": "object"
   },
   "schema_version": {

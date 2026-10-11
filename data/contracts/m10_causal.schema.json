@@ -16,6 +16,136 @@
    "type": "string"
   },
   "nsw": {
+   "additionalProperties": true,
+   "properties": {
+    "estimator_info": {
+     "additionalProperties": false,
+     "properties": {
+      "ipw_att": {
+       "additionalProperties": false,
+       "properties": {
+        "assumptions": {
+         "items": {
+          "type": "integer"
+         },
+         "minItems": 1,
+         "type": "array"
+        },
+        "name": {
+         "type": "string"
+        },
+        "note": {
+         "type": "string"
+        },
+        "short": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "name",
+        "short",
+        "assumptions",
+        "note"
+       ],
+       "type": "object"
+      },
+      "naive": {
+       "additionalProperties": false,
+       "properties": {
+        "assumptions": {
+         "items": {
+          "type": "integer"
+         },
+         "minItems": 1,
+         "type": "array"
+        },
+        "name": {
+         "type": "string"
+        },
+        "note": {
+         "type": "string"
+        },
+        "short": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "name",
+        "short",
+        "assumptions",
+        "note"
+       ],
+       "type": "object"
+      },
+      "ols_coef": {
+       "additionalProperties": false,
+       "properties": {
+        "assumptions": {
+         "items": {
+          "type": "integer"
+         },
+         "minItems": 1,
+         "type": "array"
+        },
+        "name": {
+         "type": "string"
+        },
+        "note": {
+         "type": "string"
+        },
+        "short": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "name",
+        "short",
+        "assumptions",
+        "note"
+       ],
+       "type": "object"
+      },
+      "ra_att": {
+       "additionalProperties": false,
+       "properties": {
+        "assumptions": {
+         "items": {
+          "type": "integer"
+         },
+         "minItems": 1,
+         "type": "array"
+        },
+        "name": {
+         "type": "string"
+        },
+        "note": {
+         "type": "string"
+        },
+        "short": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "name",
+        "short",
+        "assumptions",
+        "note"
+       ],
+       "type": "object"
+      }
+     },
+     "required": [
+      "naive",
+      "ols_coef",
+      "ra_att",
+      "ipw_att"
+     ],
+     "type": "object"
+    }
+   },
+   "required": [
+    "estimator_info"
+   ],
    "type": "object"
   },
   "schema_version": {

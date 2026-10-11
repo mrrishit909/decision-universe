@@ -10,6 +10,32 @@
    "type": "array"
   },
   "features": {
+   "additionalProperties": true,
+   "properties": {
+    "display": {
+     "additionalProperties": false,
+     "properties": {
+      "categories": {
+       "type": "object"
+      },
+      "features": {
+       "type": "object"
+      },
+      "source": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "features",
+      "categories",
+      "source"
+     ],
+     "type": "object"
+    }
+   },
+   "required": [
+    "display"
+   ],
    "type": "object"
   },
   "generated_at": {

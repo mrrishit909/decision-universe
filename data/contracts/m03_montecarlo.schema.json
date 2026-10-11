@@ -10,12 +10,270 @@
    "type": "array"
   },
   "environment": {
+   "additionalProperties": true,
+   "properties": {
+    "decisions": {
+     "additionalProperties": false,
+     "properties": {
+      "crn_rule": {
+       "type": "string"
+      },
+      "lab_ranges": {
+       "type": "object"
+      },
+      "presets": {
+       "items": {
+        "additionalProperties": false,
+        "properties": {
+         "id": {
+          "type": "string"
+         },
+         "label": {
+          "type": "string"
+         },
+         "median_payback_year": {
+          "type": [
+           "number",
+           "null"
+          ]
+         },
+         "overrides": {
+          "type": "object"
+         },
+         "paid_back_n": {
+          "type": "integer"
+         },
+         "payback_share_8y": {
+          "type": "number"
+         },
+         "run": {
+          "type": "object"
+         },
+         "vectors": {
+          "items": {
+           "type": "object"
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "type": "array"
+         },
+         "vs_build_now": {
+          "type": "object"
+         }
+        },
+        "required": [
+         "id",
+         "label",
+         "overrides",
+         "run",
+         "payback_share_8y",
+         "median_payback_year",
+         "paid_back_n",
+         "vs_build_now",
+         "vectors"
+        ],
+        "type": "object"
+       },
+       "maxItems": 3,
+       "minItems": 3,
+       "type": "array"
+      }
+     },
+     "required": [
+      "presets",
+      "crn_rule",
+      "lab_ranges"
+     ],
+     "type": "object"
+    }
+   },
+   "required": [
+    "decisions"
+   ],
    "type": "object"
   },
   "generated_at": {
    "type": "string"
   },
   "histogram": {
+   "type": "object"
+  },
+  "paths": {
+   "additionalProperties": false,
+   "properties": {
+    "decisions": {
+     "additionalProperties": false,
+     "properties": {
+      "build_now": {
+       "items": {
+        "additionalProperties": false,
+        "properties": {
+         "index": {
+          "type": "integer"
+         },
+         "investment": {
+          "type": "number"
+         },
+         "npv": {
+          "type": "number"
+         },
+         "payback_year": {
+          "type": [
+           "number",
+           "null"
+          ]
+         },
+         "recovered": {
+          "items": {
+           "type": "number"
+          },
+          "maxItems": 9,
+          "minItems": 9,
+          "type": "array"
+         }
+        },
+        "required": [
+         "index",
+         "investment",
+         "npv",
+         "payback_year",
+         "recovered"
+        ],
+        "type": "object"
+       },
+       "maxItems": 16,
+       "minItems": 16,
+       "type": "array"
+      },
+      "delay_one_year": {
+       "items": {
+        "additionalProperties": false,
+        "properties": {
+         "index": {
+          "type": "integer"
+         },
+         "investment": {
+          "type": "number"
+         },
+         "npv": {
+          "type": "number"
+         },
+         "payback_year": {
+          "type": [
+           "number",
+           "null"
+          ]
+         },
+         "recovered": {
+          "items": {
+           "type": "number"
+          },
+          "maxItems": 9,
+          "minItems": 9,
+          "type": "array"
+         }
+        },
+        "required": [
+         "index",
+         "investment",
+         "npv",
+         "payback_year",
+         "recovered"
+        ],
+        "type": "object"
+       },
+       "maxItems": 16,
+       "minItems": 16,
+       "type": "array"
+      },
+      "phased": {
+       "items": {
+        "additionalProperties": false,
+        "properties": {
+         "index": {
+          "type": "integer"
+         },
+         "investment": {
+          "type": "number"
+         },
+         "npv": {
+          "type": "number"
+         },
+         "payback_year": {
+          "type": [
+           "number",
+           "null"
+          ]
+         },
+         "recovered": {
+          "items": {
+           "type": "number"
+          },
+          "maxItems": 9,
+          "minItems": 9,
+          "type": "array"
+         }
+        },
+        "required": [
+         "index",
+         "investment",
+         "npv",
+         "payback_year",
+         "recovered"
+        ],
+        "type": "object"
+       },
+       "maxItems": 16,
+       "minItems": 16,
+       "type": "array"
+      }
+     },
+     "required": [
+      "build_now",
+      "phased",
+      "delay_one_year"
+     ],
+     "type": "object"
+    },
+    "draw_order": {
+     "items": {
+      "type": "string"
+     },
+     "maxItems": 5,
+     "minItems": 5,
+     "type": "array"
+    },
+    "draws": {
+     "items": {
+      "items": {
+       "type": "number"
+      },
+      "maxItems": 5,
+      "minItems": 5,
+      "type": "array"
+     },
+     "maxItems": 16,
+     "minItems": 16,
+     "type": "array"
+    },
+    "horizon_years": {
+     "type": "integer"
+    },
+    "n_futures": {
+     "type": "integer"
+    },
+    "seed": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "seed",
+    "n_futures",
+    "horizon_years",
+    "draw_order",
+    "draws",
+    "decisions"
+   ],
    "type": "object"
   },
   "run": {
@@ -125,6 +383,7 @@
   "tags",
   "spec",
   "environment",
+  "paths",
   "run",
   "histogram",
   "convergence",

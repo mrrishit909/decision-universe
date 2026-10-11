@@ -10,6 +10,41 @@
   },
   "front": {
    "items": {
+    "additionalProperties": true,
+    "properties": {
+     "emissions": {
+      "type": "number"
+     },
+     "eps": {
+      "type": "number"
+     },
+     "lp_text_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+     },
+     "profit": {
+      "type": "number"
+     },
+     "status": {
+      "enum": [
+       "Optimal"
+      ]
+     },
+     "x": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "eps",
+     "profit",
+     "emissions",
+     "x",
+     "status",
+     "lp_text_sha256"
+    ],
     "type": "object"
    },
    "minItems": 5,
@@ -17,6 +52,35 @@
   },
   "generated_at": {
    "type": "string"
+  },
+  "lp_text": {
+   "additionalProperties": false,
+   "properties": {
+    "builder": {
+     "type": "string"
+    },
+    "example": {
+     "type": "string"
+    },
+    "example_point": {
+     "type": "integer"
+    },
+    "example_sha256": {
+     "pattern": "^[0-9a-f]{64}$",
+     "type": "string"
+    },
+    "format": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "format",
+    "builder",
+    "example_point",
+    "example",
+    "example_sha256"
+   ],
+   "type": "object"
   },
   "problem": {
    "type": "object"
@@ -71,6 +135,7 @@
   "problem",
   "anchors",
   "front",
+  "lp_text",
   "compromise_index",
   "vectors",
   "tolerance"
