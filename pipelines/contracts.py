@@ -72,7 +72,7 @@ def schemas() -> dict[str, dict]:
         "optimum": FREE, "repeated_splits": FREE, "reliability": FREE, "vectors": arr(FREE, 5), "tolerance": TOL,
     })
     o["m07_pareto"] = top("LP and Pareto", {
-        "spec": FREE, "problem": FREE, "anchors": FREE, "front": arr(FREE, 5), "vectors": arr(FREE, 5), "tolerance": TOL,
+        "spec": FREE, "problem": FREE, "anchors": FREE, "front": arr(FREE, 5), "compromise_index": I, "vectors": arr(FREE, 4), "tolerance": TOL,
     })
     o["m08_sensitivity"] = top("Sensitivity", {
         "spec": FREE, "analytic": FREE, "quadrature_check": FREE, "sobol": arr(FREE, 3), "oat": FREE, "vectors": arr(FREE, 2), "tolerance": TOL,
