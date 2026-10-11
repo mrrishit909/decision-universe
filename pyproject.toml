@@ -1,0 +1,19 @@
+[project]
+name = "decision-universe"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "highspy>=1.8.0",
+    "jsonschema>=4.26.0",
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "pytest>=9.1.1",
+    "requests>=2.34.2",
+    "scikit-learn>=1.5",
+    "scipy>=1.13",
+    "statsmodels>=0.14",
+    "SALib>=1.5",
+]
+
+[tool.setuptools]
+packages = []

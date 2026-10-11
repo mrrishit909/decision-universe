@@ -1,0 +1,62 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "checks": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "bound": {},
+     "module": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "passed": {
+      "type": "boolean"
+     },
+     "value": {}
+    },
+    "required": [
+     "module",
+     "name",
+     "value",
+     "bound",
+     "passed"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "failures_recorded": {
+   "items": {
+    "type": "string"
+   },
+   "type": "array"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "checks",
+  "failures_recorded"
+ ],
+ "title": "Validation",
+ "type": "object"
+}

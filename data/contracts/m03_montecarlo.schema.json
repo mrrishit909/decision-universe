@@ -1,0 +1,136 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "convergence": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 4,
+   "type": "array"
+  },
+  "environment": {
+   "type": "object"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "histogram": {
+   "type": "object"
+  },
+  "run": {
+   "type": "object"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "spec": {
+   "type": "object"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "tolerance": {
+   "additionalProperties": false,
+   "properties": {
+    "abs": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rel": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "abs",
+    "rel",
+    "note"
+   ],
+   "type": "object"
+  },
+  "vectors": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "ci95_hi": {
+      "type": "number"
+     },
+     "ci95_lo": {
+      "type": "number"
+     },
+     "first_5": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array"
+     },
+     "mean": {
+      "type": "number"
+     },
+     "n": {
+      "type": "integer"
+     },
+     "p05": {
+      "type": "number"
+     },
+     "p50": {
+      "type": "number"
+     },
+     "p95": {
+      "type": "number"
+     },
+     "p_loss": {
+      "type": "number"
+     },
+     "sd": {
+      "type": "number"
+     },
+     "se": {
+      "type": "number"
+     },
+     "seed": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "seed",
+     "n",
+     "mean",
+     "sd",
+     "se",
+     "ci95_lo",
+     "ci95_hi",
+     "p_loss",
+     "p05",
+     "p50",
+     "p95",
+     "first_5"
+    ],
+    "type": "object"
+   },
+   "minItems": 3,
+   "type": "array"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "spec",
+  "environment",
+  "run",
+  "histogram",
+  "convergence",
+  "vectors",
+  "tolerance"
+ ],
+ "title": "Monte Carlo",
+ "type": "object"
+}

@@ -1,0 +1,109 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "first_1000_u32": {
+   "items": {
+    "type": "integer"
+   },
+   "maxItems": 1000,
+   "minItems": 1000,
+   "type": "array"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "moments": {
+   "type": "object"
+  },
+  "normal_first": {
+   "items": {
+    "type": "number"
+   },
+   "type": "array"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "seed": {
+   "type": "integer"
+  },
+  "seed_vectors": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "first_16_u32": {
+      "items": {
+       "type": "integer"
+      },
+      "maxItems": 16,
+      "minItems": 16,
+      "type": "array"
+     },
+     "seed": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "seed",
+     "first_16_u32"
+    ],
+    "type": "object"
+   },
+   "minItems": 3,
+   "type": "array"
+  },
+  "spec": {
+   "type": "object"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "tolerance": {
+   "additionalProperties": false,
+   "properties": {
+    "abs": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rel": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "abs",
+    "rel",
+    "note"
+   ],
+   "type": "object"
+  },
+  "uniform_first": {
+   "items": {
+    "type": "number"
+   },
+   "type": "array"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "spec",
+  "seed",
+  "first_1000_u32",
+  "uniform_first",
+  "normal_first",
+  "seed_vectors",
+  "tolerance",
+  "moments"
+ ],
+ "title": "Sampling",
+ "type": "object"
+}

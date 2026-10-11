@@ -1,0 +1,76 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "beta_binomial": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 8,
+   "type": "array"
+  },
+  "coverage": {
+   "type": "object"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "normal_normal": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 6,
+   "type": "array"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "sequential": {
+   "type": "object"
+  },
+  "spec": {
+   "type": "object"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "tolerance": {
+   "additionalProperties": false,
+   "properties": {
+    "abs": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rel": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "abs",
+    "rel",
+    "note"
+   ],
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "spec",
+  "beta_binomial",
+  "normal_normal",
+  "sequential",
+  "coverage",
+  "tolerance"
+ ],
+ "title": "Bayesian updating",
+ "type": "object"
+}

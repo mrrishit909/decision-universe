@@ -1,0 +1,163 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "artifact_bytes": {
+   "type": "object"
+  },
+  "artifacts": {
+   "items": {
+    "type": "string"
+   },
+   "minItems": 1,
+   "type": "array"
+  },
+  "citations": {
+   "items": {
+    "type": "string"
+   },
+   "minItems": 1,
+   "type": "array"
+  },
+  "environment": {
+   "type": "object"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "licence_note": {
+   "type": "string"
+  },
+  "limitations": {
+   "items": {
+    "type": "string"
+   },
+   "minItems": 1,
+   "type": "array"
+  },
+  "modules": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "artifact": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "reference": {
+      "type": "string"
+     },
+     "tag": {
+      "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "artifact",
+     "tag",
+     "reference"
+    ],
+    "type": "object"
+   },
+   "maxItems": 10,
+   "minItems": 10,
+   "type": "array"
+  },
+  "project": {
+   "type": "string"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "seed": {
+   "type": "integer"
+  },
+  "sources": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "bytes": {
+      "type": "integer"
+     },
+     "id": {
+      "type": "string"
+     },
+     "licence": {
+      "type": "string"
+     },
+     "md5": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "retrieved_at_utc": {
+      "type": "string"
+     },
+     "sha256": {
+      "type": "string"
+     },
+     "tag": {
+      "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+      "type": "string"
+     },
+     "url": {
+      "type": "string"
+     },
+     "use": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "url",
+     "retrieved_at_utc",
+     "sha256",
+     "md5",
+     "bytes",
+     "licence",
+     "use",
+     "tag"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "tagline": {
+   "type": "string"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "project",
+  "tagline",
+  "seed",
+  "sources",
+  "citations",
+  "licence_note",
+  "limitations",
+  "modules",
+  "artifacts",
+  "artifact_bytes",
+  "environment"
+ ],
+ "title": "Meta",
+ "type": "object"
+}

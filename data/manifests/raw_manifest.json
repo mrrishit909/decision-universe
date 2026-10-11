@@ -1,0 +1,29 @@
+{
+ "files": {
+  "german.data": {
+   "bytes": 79793,
+   "md5": "6b94c2e35480e671545e52a808a8a549",
+   "sha256": "b21f3d81db8071257d5ff1deaeba1fd4303b62712e6fcc9715c7a86202cb5871",
+   "url": "https://archive.ics.uci.edu/static/public/144/statlog+german+credit+data.zip#german.data"
+  },
+  "german_credit.zip": {
+   "bytes": 29607,
+   "md5": "698bb0b5209362d6077081fc0735d535",
+   "sha256": "e12d9d5def6845c0622634a1cd2ab87fa470668c4298f1ec52a4e403376a435b",
+   "url": "https://archive.ics.uci.edu/static/public/144/statlog+german+credit+data.zip"
+  },
+  "nsw_dw.dta": {
+   "bytes": 28598,
+   "md5": "e3367ddd449e25cb4c54c04263978800",
+   "sha256": "d1bd2680a1c6f799f1c6d2455bf29633fdf19be01cb19490621c20a560b4e072",
+   "url": "https://users.nber.org/~rdehejia/data/nsw_dw.dta"
+  },
+  "psid_controls.dta": {
+   "bytes": 111458,
+   "md5": "1ae3ab3bc7c40048f41b0953a5e634f8",
+   "sha256": "7beebae8928035d6abf662b994ce77a4fbea7ae6575037ff94e92fe099b43e14",
+   "url": "https://users.nber.org/~rdehejia/data/psid_controls.dta"
+  }
+ },
+ "retrieved_at_utc": "2026-10-11T06:52:56+00:00"
+}

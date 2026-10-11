@@ -1,0 +1,107 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "curve": {
+   "type": "object"
+  },
+  "dataset": {
+   "type": "object"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "model": {
+   "type": "object"
+  },
+  "optimum": {
+   "type": "object"
+  },
+  "reliability": {
+   "type": "object"
+  },
+  "repeated_splits": {
+   "type": "object"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "spec": {
+   "type": "object"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "test": {
+   "additionalProperties": false,
+   "properties": {
+    "p_bad": {
+     "items": {
+      "type": "number"
+     },
+     "type": "array"
+    },
+    "y_bad": {
+     "items": {
+      "type": "integer"
+     },
+     "type": "array"
+    }
+   },
+   "required": [
+    "p_bad",
+    "y_bad"
+   ],
+   "type": "object"
+  },
+  "tolerance": {
+   "additionalProperties": false,
+   "properties": {
+    "abs": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rel": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "abs",
+    "rel",
+    "note"
+   ],
+   "type": "object"
+  },
+  "vectors": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 5,
+   "type": "array"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "spec",
+  "dataset",
+  "model",
+  "test",
+  "curve",
+  "optimum",
+  "repeated_splits",
+  "reliability",
+  "vectors",
+  "tolerance"
+ ],
+ "title": "Cost-sensitive thresholds",
+ "type": "object"
+}

@@ -1,0 +1,80 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "assumptions": {
+   "items": {
+    "type": "string"
+   },
+   "minItems": 3,
+   "type": "array"
+  },
+  "dag": {
+   "type": "object"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "nsw": {
+   "type": "object"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "spec": {
+   "type": "object"
+  },
+  "synthetic": {
+   "type": "object"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "tolerance": {
+   "additionalProperties": false,
+   "properties": {
+    "abs": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rel": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "abs",
+    "rel",
+    "note"
+   ],
+   "type": "object"
+  },
+  "vectors": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 3,
+   "type": "array"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "spec",
+  "dag",
+  "assumptions",
+  "nsw",
+  "synthetic",
+  "vectors",
+  "tolerance"
+ ],
+ "title": "Causal inference",
+ "type": "object"
+}

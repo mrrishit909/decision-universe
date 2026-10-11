@@ -1,0 +1,116 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "cases": {
+   "items": {
+    "additionalProperties": false,
+    "properties": {
+     "cdf": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array"
+     },
+     "discrete": {
+      "type": "boolean"
+     },
+     "dist": {
+      "type": "string"
+     },
+     "p": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array"
+     },
+     "params": {
+      "type": "object"
+     },
+     "pdf": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array"
+     },
+     "quantile": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array"
+     },
+     "x": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "dist",
+     "params",
+     "x",
+     "pdf",
+     "cdf",
+     "p",
+     "quantile",
+     "discrete"
+    ],
+    "type": "object"
+   },
+   "minItems": 5,
+   "type": "array"
+  },
+  "checks": {
+   "type": "object"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "spec": {
+   "type": "object"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "tolerance": {
+   "additionalProperties": false,
+   "properties": {
+    "abs": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rel": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "abs",
+    "rel",
+    "note"
+   ],
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "spec",
+  "tolerance",
+  "cases",
+  "checks"
+ ],
+ "title": "Distributions",
+ "type": "object"
+}

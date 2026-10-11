@@ -1,0 +1,76 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "applicants": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 6,
+   "type": "array"
+  },
+  "features": {
+   "type": "object"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "model": {
+   "type": "object"
+  },
+  "results": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 6,
+   "type": "array"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "spec": {
+   "type": "object"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "tolerance": {
+   "additionalProperties": false,
+   "properties": {
+    "abs": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rel": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "abs",
+    "rel",
+    "note"
+   ],
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "spec",
+  "model",
+  "features",
+  "applicants",
+  "results",
+  "tolerance"
+ ],
+ "title": "Counterfactuals",
+ "type": "object"
+}

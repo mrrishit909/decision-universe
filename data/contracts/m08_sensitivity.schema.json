@@ -1,0 +1,80 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "additionalProperties": false,
+ "properties": {
+  "analytic": {
+   "type": "object"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "oat": {
+   "type": "object"
+  },
+  "quadrature_check": {
+   "type": "object"
+  },
+  "schema_version": {
+   "const": "v1"
+  },
+  "sobol": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 3,
+   "type": "array"
+  },
+  "spec": {
+   "type": "object"
+  },
+  "tags": {
+   "additionalProperties": {
+    "pattern": "^(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC)(/(OBSERVED|DERIVED|PREDICTED|SIMULATED|SYNTHETIC))*$",
+    "type": "string"
+   },
+   "minProperties": 1,
+   "type": "object"
+  },
+  "tolerance": {
+   "additionalProperties": false,
+   "properties": {
+    "abs": {
+     "type": "number"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rel": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "abs",
+    "rel",
+    "note"
+   ],
+   "type": "object"
+  },
+  "vectors": {
+   "items": {
+    "type": "object"
+   },
+   "minItems": 2,
+   "type": "array"
+  }
+ },
+ "required": [
+  "schema_version",
+  "generated_at",
+  "tags",
+  "spec",
+  "analytic",
+  "quadrature_check",
+  "sobol",
+  "oat",
+  "vectors",
+  "tolerance"
+ ],
+ "title": "Sensitivity",
+ "type": "object"
+}
