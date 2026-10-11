@@ -60,6 +60,7 @@ These are inputs to the design. The design does not choose them.
   8. Attributions on screen: NBER Dehejia data page link plus the three papers (required by its terms), UCI German Credit citation (CC BY 4.0), Ishigami/Saltelli citations, HiGHS.
 - **Sketches** (original, rendered by `design/sketches/render_sketches.py` from the project's own seeded reference code; rasterized by `render_sheet.mjs`; composed by `compose_sheet.py`):
   - `turn-s00-d.png`, `turn-s00-m.png`: concept A at S00, D and M
+  - `m-sheet-p04-p05-p10.png`: the M composition beside the real P04 and P05 390x844 S00 frames
   - `loom-s00-d.png`: concept B (rejected)
   - `bloom-s00-d.png`: concept C, the plan's form (rejected)
   - `distinctness-sheet.png`: the contact-scale comparison against P01-P09
@@ -284,7 +285,7 @@ The FUTURES nav item targets S00's end state (top of page). Total about 2,550vh.
 
 | State | D 1440x900 | T 768x1024 | M 390x844 | Notes |
 |---|---|---|---|---|
-| **G0 Giant** (S00, S01 start, S08 echo) | c (1010, 470), **R 590** (diameter 1.31 x frame height). Left arc visible x 420-560 at mid-height; top, right and bottom cropped | c (470, 700), R 620 (1.21 x). Headline band x 48-520, y 96-300 over a left-to-right top scrim (x 0-540); the top arc visible upper right (x 560-768, y 80-200) outside the scrim; left, right and bottom cropped | c (195, 300), R 460 (diameter 1.09 x frame height, 2.36 x frame width). Centre and the 12 o'clock ray in view; headline band y 560-740 under a scrim | **Statement never lower-left on D/T** (review note). The decision square and at least 0.8R of the 12 o'clock ray are visible on every viewport. M is under 1.2 x height by design: a larger R hides the centre behind the statement |
+| **G0 Giant** (S00, S01 start, S08 echo) | c (1010, 470), **R 590** (diameter 1.31 x frame height). Left arc visible x 420-560 at mid-height; top, right and bottom cropped | c (470, 700), R 620 (1.21 x). Headline band x 48-520, y 96-300 over a left-to-right top scrim (x 0-540); the top arc visible upper right (x 560-768, y 80-200) outside the scrim; left, right and bottom cropped | c (195, 600), R 460 (diameter 1.09 x frame height, 2.36 x frame width). **Statement at the top** (y 64-230 over a top scrim), the Turn below it with the decision square at y 600 and the payback ladder rising toward the statement; the bottom is cropped behind the MENU pill. This is the inverse of P04's and P05's M (disc above, statement below), checked on `m-sheet-p04-p05-p10.png` | **Statement never lower-left on D/T** (review note). The decision square and at least 0.8R of the 12 o'clock ray are visible on every viewport (on M the ray from y 600 to y 232, 0.8R). M is under 1.2 x height by design: the centre must stay in the frame below the statement |
 | G1 Aside (S01 compare, S02-S03b backdrop at 20%) | c (1120, 470), R 330 | c (384, 700), R 280 | c (195, 250), R 170 | |
 | G2 Scene (S03a) | c (1000, 470), R 380 | c (384, 560), R 330 | c (195, 330), R 180 | |
 | PAIR (S01 step 2) | A c (700, 470), B c (1120, 470), R 230 each | c (384, 380) and (384, 760), R 170 | c (195, 270) and (195, 560), R 125 | Same draw indices, keyed; a hovered index lights in both |
@@ -292,7 +293,7 @@ The FUTURES nav item targets S00's end state (top of page). Total about 2,550vh.
 | G5 Lab (THE LAB) | c (980, 470), R 360 | c (384, 520), R 300 | c (195, 280), R 170 | |
 
 - **Interpolation.** Between states, `c` interpolates linearly and `R` in log space: camera moves only. They never animate data.
-- **Sketches.** `turn-s00-d.png` (G0 D) and `turn-s00-m.png` (an earlier M at R 330; the build uses R 460).
+- **Sketches.** `turn-s00-d.png` (G0 D) and `turn-s00-m.png` (G0 M at the spec geometry, statement on top). `m-sheet-p04-p05-p10.png` puts the M sketch beside the real P04 and P05 390x844 S00 frames: both of theirs are disc-above, statement-below; P10 M is statement-above, Turn-below.
 
 ### 3.4 Scenes
 
@@ -309,10 +310,10 @@ No spinners, no artificial delays.
 
 #### S00 Opening: the First Turn (overlay, 4.8s or less)
 
-- **Composition** (timeline in MOTION_SYSTEM 5.1): black; the mono wordmark top-left; the 4px decision square at G0 `c` with `INVEST 100 M USD?` beside it; eight beats (years 1-8): the threads extend outward one year per beat, together at first, separating as they wind; payback squares appear on the 12 o'clock ray as threads close; the glow fades in after beat 8; the headline sharpens; the nav enters.
-- **Per viewport:** D headline 72px, 2 lines, x 96, y 110-260, over a top-left scrim (x 0-760, y 0-330, black 88% to 0). T 56px, 3 lines, x 48, y 96-300, full-width top scrim. M 40px, 3 lines, y 580-700, scrim band y 540-760.
-- **Corner labels.** Top-left `DECISION UNIVERSE`. Top-right line 1 `INVEST {{investment_mean}} M USD · {{n}} FUTURES · SEED {{seed}}`; line 2 (50%) the unit line.
-- **Chip under the headline:** `SYNTHETIC · SEEDED · RUNNING IN YOUR BROWSER` from the first frame.
+- **Composition** (timeline in MOTION_SYSTEM 5.1): black; the mono wordmark top-left; the 4px decision square at G0 `c` with `INVEST 100 M USD?` (the median, see corner labels) beside it; eight beats (years 1-8): the threads extend outward one year per beat, together at first, separating as they wind; payback squares appear on the 12 o'clock ray as threads close; the glow fades in after beat 8; the headline sharpens; the nav enters.
+- **Per viewport:** D headline 72px, 2 lines, x 96, y 110-260, over a top-left scrim (x 0-760, y 0-330, black 88% to 0). T 56px, 3 lines, x 48-520, y 96-300, left-to-right top scrim. M 40px, 3 lines, y 64-180, top scrim y 0-236; the caption sits at y 750 above the MENU pill.
+- **Corner labels.** Top-left `DECISION UNIVERSE`. Top-right line 1 `INVEST {{investment_median}} M USD (MEDIAN) · {{n}} FUTURES · SEED {{seed}}`, where `investment_median = exp(m03.environment.investment.mu)` = 100 (the lognormal's mean is about 101.1, so it is never labelled as the mean); line 2 (50%) the unit line.
+- **Chip under the headline:** `SYNTHETIC · SEEDED` from the first frame. `· RUNNING IN YOUR BROWSER` is appended only when the worker has returned the paths (bound to the compute state, never static). **Worker failure fallback:** the same generator and path code (one TS module, imported by both) runs on the main thread for the LOW-tier 1,200 paths (a few ms), and the line reads `· RUNNING IN YOUR BROWSER (MAIN THREAD)`; the statement is still true.
 - **Caption bottom-left (D) / under the chip (T/M):** `{{payback_share}}% PAY BACK IN 8 YEARS · {{loss_share}}% NEVER COMPLETE THE TURN`; second line `WHITE = POSITIVE NPV · VIOLET = LOSS · SQUARES ON THE TOP LINE = PAYBACK YEAR`.
 - **LCP rule.** `h1[data-hero]` is in the DOM from first paint as ghost text; WebGL init waits for first paint; the threads are never on the LCP path.
 - **Insight.** One decision, thousands of futures; about six in ten close the circle.
@@ -380,9 +381,25 @@ Footer line on this scene: `EVERYTHING ELSE ON THIS SITE IS SYNTHETIC AND SEEDED
 
 #### THE LAB: ten instruments (normal flow, 100dvh minimum)
 
-- Left rail (floating glass controls, never a solid panel): the Turn's decision levers (DR-2 parameters), SEED (a number field; changing it re-runs everything seeded), FUTURES DRAWN.
+- Left rail (floating glass controls, never a solid panel): the Turn's decision levers (DR-2 parameters), SEED (a number field), FUTURES DRAWN.
 - The Turn at G5.
-- Under it, the **instrument list**: ten rows (`meta.modules`), each: number, name, tag chip, `RUN IN YOUR BROWSER`, result `MATCHES PYTHON REFERENCE (k OF k)` or `MISMATCH`, elapsed ms. `RUN ALL TEN`.
+- Under it, the **instrument list**: ten rows (`meta.modules`), each: number, name, tag chip, what runs where (below), `RUN IN YOUR BROWSER`, the result and elapsed ms. `RUN ALL TEN`.
+- **What actually runs in the browser** (from each artifact's `spec`, read 2026-10-11; the row prints its column 3 verbatim):
+
+| Module | Recomputed in the browser, with parity | Stays PRECOMPUTED · PYTHON REFERENCE | Seed that drives it |
+|---|---|---|---|
+| m01 Distributions | pdf, cdf, quantile on the published grids; normalization checks | none | none (deterministic) |
+| m02 Sampling | xoshiro128** u32 stream, uniforms, normals | none | the SEED field (vectors at 20261011 and the 3 `seed_vectors`) |
+| m03 Monte Carlo | the hero paths and the run summary; the `vectors` | the 100,000 convergence prefix shown as a table row | the SEED field (vectors at their own published seeds) |
+| m04 Bayes | conjugate posteriors, credible and confidence intervals, exact coverage, the sequential path | none | the sequential path: SEED field (`m04.sequential.seed`) |
+| m05 Forecast | SES and AR(1) fits and intervals on the published series | the 2,000-replicate coverage study (numpy PCG64, `m05.spec.coverage_study`) | none in the browser |
+| m06 Thresholds | cost curve and optimum from the published test probabilities | the model fit, Platt scaling, repeated splits (`m06.spec.scope`) | none in the browser |
+| m07 LP / Pareto | epsilon solves with HiGHS-wasm | none | none (deterministic) |
+| m08 Sensitivity | Ishigami values, analytic indices, Saltelli/Jansen estimates | none | the published replicate seeds (`m08.vectors`) |
+| m09 Counterfactuals | model scores and the exhaustive minimal-change search | the model fit | none (deterministic) |
+| m10 Causal | the four estimators on the SYNTHETIC confounded world (`m10.vectors`) | every NSW/PSID number and its bootstrap CI (microdata not shipped; numpy PCG64; `m10.spec.scope`) | the vectors' own seeds |
+
+- **Seed rules.** The SEED field drives only the xoshiro-seeded views (m02, m03, the m04 sequential path). PRECOMPUTED parts never change when the seed changes and say so. Parity is shown only where a published vector exists: at seed 20261011 (and the published vector seeds) the row shows `MATCHES PYTHON REFERENCE (k OF k)` or `MISMATCH`; at any other seed it shows `NO PUBLISHED VECTOR FOR SEED {{seed}} · COMPUTED IN YOUR BROWSER`, never MATCH.
 - **Reset:** defaults and seed 20261011.
 
 #### S08 Conclusion: every decision, again (200vh)
@@ -425,7 +442,7 @@ For each: inputs, state, data, output, keyboard, mobile, reduced motion, test.
 9. **Trade-off [P].** Inputs: epsilon slider. Output: a live solve point. Test: objective matches `m07.vectors` within tolerance; status word shown.
 10. **What Matters [P].** Inputs: N stepper. Test: estimates at the published N equal `m08.sobol` within tolerance; analytic values equal the closed form.
 11. **The Unchosen [P].** Inputs: estimator, sample, synthetic toggle. Test: every estimator row prints a gap equal to estimate minus benchmark; the benchmark is visible whenever any observational estimate is.
-12. **Seed of the World / Run All Ten [P].** Inputs: seed field, levers, RUN. Test: at seed 20261011 every module reports MATCH; a changed seed changes the threads and the S08 line.
+12. **Seed of the World / Run All Ten [P].** Inputs: seed field, levers, RUN. Test: at seed 20261011 every module's browser-recomputed part reports MATCH against its published vectors; PRECOMPUTED parts are labelled and unchanged by any seed; at another seed the seeded rows show `NO PUBLISHED VECTOR FOR SEED`, the threads and the S08 line change, and nothing else does.
 13. **Thread Inspector.** Hover/tap/focus a thread: its draw index, the five inputs, NPV, payback year or `NEVER`. Keyboard Left/Right through threads sorted by NPV. Text alternative: a table of 50 sampled futures.
 14. **Every Decision, Again.** The G0 Turn on the visitor's state. Test: the S08 counts equal the LAB's last run.
 
@@ -435,7 +452,7 @@ For each: inputs, state, data, output, keyboard, mobile, reduced motion, test.
 
 Design copy is marked; every number is a placeholder bound in section 6.
 
-- **S00:** "Every decision creates a different future." / chip `SYNTHETIC · SEEDED · RUNNING IN YOUR BROWSER`.
+- **S00:** "Every decision creates a different future." / chip `SYNTHETIC · SEEDED`, plus `· RUNNING IN YOUR BROWSER` once the worker has returned.
 - **S01:** "Same chance. Another decision. Different futures." / "Each line is one simulated world. Under both decisions it meets the same luck; only the choice differs."
 - **S02:** card titles "The seed", "Shapes of chance", "Real applicants", "Real earnings".
 - **S03a:** "More futures do not make the future less uncertain. They make the average less uncertain."
@@ -505,7 +522,7 @@ The build fails review if any of these is true:
 5. **The Turn lies:** a thread not equal to a seeded future; angle not equal to `360° × recovered`; radius not linear in years; a colour not equal to the sign of NPV; a payback square without a thread reaching 1; threads of two decisions mixed in one Turn; a decision change that does not keep draw indices (common random numbers).
 6. **Interval confusion:** a credible interval called confidence or drawn as brackets; a confidence interval drawn filled; a prediction interval without its covered count.
 7. **Counterfactual or causal overreach:** a module-9 result without `MODEL COUNTERFACTUAL · NOT A CAUSAL CLAIM`; any observational estimate shown without the NSW benchmark and its gap; the DAG assumptions not visible in S07.
-8. **Live compute mislabelled:** any recompute without `RUNNING IN YOUR BROWSER` and its seed; any use of "AI", "smart", "intelligent"; a precomputed number presented as live.
+8. **Live compute mislabelled:** any recompute without `RUNNING IN YOUR BROWSER` and its seed; that line shown before the computation has returned; a PRECOMPUTED number that changes with the seed; MATCH shown at a seed with no published vector; any use of "AI", "smart", "intelligent"; a precomputed number presented as live.
 9. **Seeds or tags missing:** a seeded view without its seed; a data visual without a tag chip; SYNTHETIC missing from the first S00 frame.
 10. **Attribution missing:** the NBER link and three papers missing from S02 card 4 or S07; the UCI citation missing from S05; HiGHS missing from S06a.
 11. **Any number is not bound** to a contracted field, a stated arithmetic of published inputs, a live recompute with parity, or a DR.
@@ -517,6 +534,6 @@ The build fails review if any of these is true:
 17. **Contrast fails:** `#690DE2` as text or a line; 50% white under 13px; light blue on any line.
 18. **A reference asset is used** (Blink fonts, wordmark styling, copy, images, video).
 19. **The closing doesn't echo the opening:** S08 must be the G0 Turn, the decision square, the eight-beat growth and the S00 statement.
-20. **The giant circle is undersized or composed like P04/P05:** diameter under 1.2 x frame height on D or T at G0 or S08 p 0.75 (M: under 2.2 x frame width); the decision square or 0.8R of the 12 o'clock ray out of view; the S00 statement lower-left on D or T.
+20. **The giant circle is undersized or composed like P04/P05:** diameter under 1.2 x frame height on D or T at G0 or S08 p 0.75 (M: under 2.2 x frame width); the decision square or 0.8R of the 12 o'clock ray out of view; the S00 statement lower-left on D or T, or below the Turn on M.
 21. **A U+2014 or U+2015** appears in site copy.
 22. **Real entity implied:** the synthetic project named as a real company or market; German Credit applicants described as current people; NSW results described as a current programme's effect.

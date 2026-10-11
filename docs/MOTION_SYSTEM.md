@@ -128,10 +128,10 @@ Format: **Trigger · Initial → End · Duration / Easing · Sync · Interruptio
 
 | t (ms) | Event | Duration / easing |
 |---|---|---|
-| 0 | Black; ghost headline and chip already painted (LCP); wordmark top-left | none |
+| 0 | Black; ghost headline and the `SYNTHETIC · SEEDED` chip already painted (LCP); wordmark top-left | none |
 | 150 | SKIP INTRO visible (bottom right), focused | 200 fast |
 | 300 | The decision square scales 0 → 1 at G0 `c`; `INVEST {{investment}} M USD?` types in beside it word by word (blur to sharp, 80ms per word) | 350 premium |
-| 900 | Worker returns the hero paths (it starts at first paint + idle; if late, beat 1 waits, the label reads `DRAWING {{n}} FUTURES · SEED`) | none |
+| 900 | Worker returns the hero paths (it starts at first paint + idle; if late, beat 1 waits, the label reads `DRAWING {{n}} FUTURES · SEED`). Only now is `· RUNNING IN YOUR BROWSER` appended to the chip (200 fast). If the worker fails or has not answered by 2,500ms, the shared path module runs on the main thread for the LOW-tier 1,200 paths and the chip reads `· RUNNING IN YOUR BROWSER (MAIN THREAD)` | none |
 | 1000-3800 | **Eight growth beats**: `u_years` 0 → 1 → ... → 8, 350ms per beat, symmetric ease within each beat; payback squares pop in (200ms) as `u_years` passes them | 8 x 350 |
 | 3800 | Glow pass fades 0 → 40% | 600 smooth |
 | 3900 | Headline sharpens word by word (ghost → sharp), caption numbers tween from 0 | 600 smooth |
@@ -273,7 +273,8 @@ React + TS strict + Vite + Tailwind (shared shell). Lenis plus the shared single
 7. S05: cost readout equals the recomputed formula at 20 handle positions; at cost 5 the minimum equals `m06.optimum.t_opt_grid`.
 8. S06a: live solve objective within `m07.tolerance`; no `.wasm` request before S06.
 9. S07: whenever an observational row is visible, the benchmark line is visible; gaps equal estimate minus benchmark.
-10. Parity: THE LAB RUN ALL TEN shows MATCH for all ten at seed 20261011.
+10. Parity: THE LAB RUN ALL TEN shows MATCH for every browser-recomputed part at seed 20261011; PRECOMPUTED parts (m05 coverage, m06 fit and splits, m10 NSW) are labelled and identical across seeds; at seed 7 the seeded rows read `NO PUBLISHED VECTOR FOR SEED 7` and no row reads MATCH.
+17. Compute-state honesty: the S00 chip has no `RUNNING IN YOUR BROWSER` before the worker's first message; with the worker blocked (Playwright route abort), the main-thread fallback draws 1,200 threads and the chip says MAIN THREAD.
 11. Sticky scenes release at track end; reverse and rapid scroll; nav jumps land at rest points; Back/Forward; resize mid-scene in both scrollbar modes (ED #39).
 12. Reduced motion: no pinned track; all controls work; no trap.
 13. Tiering: forced `?tier=low` renders Canvas2D with the unit line's drawn count; a simulated slow frame demotes HIGH to MED once.

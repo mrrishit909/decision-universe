@@ -115,15 +115,18 @@ def text_d(fs, cross):
 
 
 def text_m(fs, cross):
+    """M composition: statement at the TOP, the Turn below it (not P04/P05's disc-above, statement-below)."""
+    loss = sum(1 for _, v in fs if v < 0) / len(fs)
     return [
+        '<rect x="0" y="0" width="390" height="236" fill="#000" opacity=".78"/>',
         '<text x="16" y="32" font-size="11">DECISION UNIVERSE</text>',
         f'<text x="374" y="32" font-size="11" text-anchor="end">SEED {SEED}</text>',
-        '<rect x="0" y="560" width="390" height="284" fill="#000" opacity=".72"/>',
-        '<text class="serif" x="16" y="610" font-size="40">Every decision</text>',
-        '<text class="serif" x="16" y="652" font-size="40">creates a different</text>',
-        '<text class="serif" x="16" y="694" font-size="40">future.</text>',
-        '<rect x="16" y="716" width="290" height="24" fill="#ffffff1a"/>',
-        '<text x="22" y="732" font-size="11" style="fill:#b48cff">SYNTHETIC · SEEDED · IN YOUR BROWSER</text>',
+        '<text class="serif" x="16" y="96" font-size="40">Every decision</text>',
+        '<text class="serif" x="16" y="138" font-size="40">creates a different</text>',
+        '<text class="serif" x="16" y="180" font-size="40">future.</text>',
+        '<rect x="16" y="200" width="196" height="22" fill="#ffffff1a"/>',
+        '<text x="22" y="215" font-size="11" style="fill:#b48cff">SYNTHETIC · SEEDED</text>',
+        f'<text x="16" y="760" font-size="11">{round(100*(1-loss))}% PAY BACK IN 8 YEARS</text>',
         '<rect x="115" y="790" width="160" height="32" fill="#fff"/><text x="195" y="811" font-size="11" text-anchor="middle" style="fill:#000">THE DECISION</text>',
     ]
 
@@ -177,6 +180,6 @@ def bloom(name, w, h, n=1500):
 
 if __name__ == "__main__":
     turn("turn-s00-d", 1440, 900, 1010, 470, 590, 2500, text_d)
-    turn("turn-s00-m", 390, 844, 195, 300, 330, 1500, text_m)
+    turn("turn-s00-m", 390, 844, 195, 600, 460, 1500, text_m)
     loom("loom-s00-d", 1440, 900)
     bloom("bloom-s00-d", 1440, 900)
