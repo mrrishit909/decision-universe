@@ -35,9 +35,9 @@ export function S01Another({ def }: { def: SceneDef }) {
         <p className="scene-kicker">S01 · SAME WORLDS, ANOTHER DECISION</p>
         <WordReveal as="h2" id={`${def.id}-title`} tabIndex={-1} data-scene-heading className="scene-title scene-title--md" text="Same chance. Another decision. Different futures." mode={{ kind: "scrub", track: def.id, from: 0, to: 0.3 }} />
         <p className="caveat">EACH LINE IS ONE SIMULATED WORLD. UNDER BOTH DECISIONS IT MEETS THE SAME LUCK; ONLY THE CHOICE DIFFERS.</p>
-        <ArtifactStatus file="m03_montecarlo.json" state={m3} retry={retry} empty="UNAVAILABLE">{(m) => <Tag text={m.tags.paths} />}</ArtifactStatus>
       </Column>
       <Lower>
+        <ArtifactStatus file="m03_montecarlo.json" state={m3} retry={retry} empty="UNAVAILABLE">{(m) => <Tag text={m.tags.paths} />}</ArtifactStatus>
         <Radio label="DECISION B" value={b} options={KEYS} render={(k) => LABEL[k]!} onChange={pickB} />
         {sums.length ? (
           <ul className="ledger-pair" data-ledger>

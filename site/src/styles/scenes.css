@@ -168,3 +168,18 @@ html[data-motion="off"] .hero-title { top: 110px; }
   .scene-col > .caveat { display: none; }
   .scene-lower { max-height: 46dvh; }
 }
+
+@media (max-width: 1023px) { .scene-foot[data-foot] { right: 150px; } }
+@media (max-height: 800px) { .s02-kicker { top: 14px; } }
+@media (max-width: 767px) {
+  .scene-col { max-height: 32dvh; }
+  .visual { top: 33dvh; bottom: 46dvh; }
+  .scene-learning .visual { top: 33dvh; bottom: 46dvh; }
+  .scene-lower { max-height: 34dvh; }
+}
+.cf { overflow: auto; max-height: 100%; }
+@media (max-width: 1023px) { .scene-col { top: 0; } }
+@media (max-width: 767px) { .visual, .scene-learning .visual { bottom: 48dvh; } }
+.cf-cards { display: flex; }
+.s08-foot { background: #000; }
+.s08-foot .scene-foot[data-foot] { position: static; background: none; max-height: none; }

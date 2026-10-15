@@ -43,7 +43,7 @@ function Rows({ m, sample, synth, gamma, sel }: { m: any; sample: string; synth:
   return (
     <svg className="estimators" viewBox={`0 0 ${W} 250`} role="img" aria-label="Estimators beside the benchmark">
       <rect x={X(ref) - 1} y="18" width="2" height="222" fill="#fff" data-benchmark />
-      <text x={X(ref) - 6} y="12" textAnchor="end" className="svg-t">{synth ? "TRUE EFFECT 1 (KNOWN, SYNTHETIC)" : `EXPERIMENTAL BENCHMARK (NSW, RANDOMISED) ${fmt(bench, 2)} USD`}</text>
+      <text x="10" y="12" className="svg-t">{synth ? "TRUE EFFECT 1 (KNOWN, SYNTHETIC)" : `EXPERIMENTAL BENCHMARK (NSW, RANDOMISED) ${fmt(bench, 2)} USD`}</text>
       {!synth ? <g data-interval="confidence"><line x1={X(m.nsw.benchmark.ci95[0])} x2={X(m.nsw.benchmark.ci95[1])} y1="26" y2="26" stroke="#fff" /><line x1={X(m.nsw.benchmark.ci95[0])} x2={X(m.nsw.benchmark.ci95[0])} y1="21" y2="31" stroke="#fff" /><line x1={X(m.nsw.benchmark.ci95[1])} x2={X(m.nsw.benchmark.ci95[1])} y1="21" y2="31" stroke="#fff" /></g> : null}
       {rows.map((r, i) => {
         const y = 62 + i * 46, on = r.k === sel;

@@ -74,6 +74,7 @@ export function S03bLearning({ def }: { def: SceneDef }) {
   const post = betaBinomial(a0, b0, obs.filter(Boolean).length, obs.length);
   const labels = m4.status === "ready" ? m4.data.spec.labels : null;
   const cov = m4.status === "ready" ? m4.data.coverage : null;
+  const compact = typeof document !== "undefined" && document.documentElement.clientWidth < 1024;
   const same = cov && JSON.stringify(cov.credible_uniform_prior) === JSON.stringify(cov.wilson_confidence);
   return (
     <Track id={def.id} height={def.track} landing={def.landing} className="scene scene-learning">
@@ -91,7 +92,7 @@ export function S03bLearning({ def }: { def: SceneDef }) {
         <ArtifactStatus file="m04_bayes.json" state={m4} retry={retry} empty="UNAVAILABLE">{(m) => (
           <>
             {stage < 4 ? <Column2 rows={[...shown, ...live.slice(0, 0)]} trueRate={m.sequential.p_true} /> : null}
-            {stage >= 4 && cov ? (
+            {stage >= 4 && cov && !compact ? (
               <div className="coverage" data-coverage>
                 <p className="mono-label">EXACT COVERAGE AT n {cov.n}, TRUE RATE {cov.p.join(" · ")}</p>
                 <p className="readout mono-label" data-words="credible">CREDIBLE (UNIFORM PRIOR) {cov.credible_uniform_prior.map((x: number) => fmt(x * 100, 1)).join("% · ")}%</p>
@@ -105,6 +106,16 @@ export function S03bLearning({ def }: { def: SceneDef }) {
         )}</ArtifactStatus>
       </div>
       <Lower>
+        {stage >= 4 && cov && compact ? (
+              <div className="coverage" data-coverage>
+                <p className="mono-label">EXACT COVERAGE AT n {cov.n}, TRUE RATE {cov.p.join(" · ")}</p>
+                <p className="readout mono-label" data-words="credible">CREDIBLE (UNIFORM PRIOR) {cov.credible_uniform_prior.map((x: number) => fmt(x * 100, 1)).join("% · ")}%</p>
+                <p className="readout mono-label" data-words="confidence">WILSON CONFIDENCE {cov.wilson_confidence.map((x: number) => fmt(x * 100, 1)).join("% · ")}%</p>
+                <p className="readout mono-label" data-words="credible">CREDIBLE, BETA(2,8) PRIOR {cov.credible_beta_2_8_prior.map((x: number) => fmt(x * 100, 1)).join("% · ")}%</p>
+                {same ? <p className="note-line">AT n {cov.n} THE TWO PROCEDURES COVER THE SAME SET OF OUTCOMES, SO THE NUMBERS ARE EQUAL. THE STATEMENTS ARE STILL DIFFERENT: ONE IS A PROBABILITY GIVEN THE DATA, THE OTHER A LONG-RUN RATE.</p> : null}
+                <p className="note-line">AVERAGE CREDIBLE COVERAGE OVER A UNIFORM PRIOR {fmt(cov.credible_average_over_uniform_prior * 100, 1)}% · PRECOMPUTED · PYTHON REFERENCE</p>
+              </div>
+            ) : null}
         <div className="ctl-row">
           <Radio label="PRIOR" value={priorKey} options={Object.keys(PRIORS)} onChange={(k) => { setPriorKey(k); setObs([]); }} asSelect />
           <button type="button" className="btn-square" onClick={() => setObs((o) => [...o, true])}>SUCCESS</button>

@@ -42,7 +42,7 @@ function Sobol({ m, est }: { m: any; est: { S: number[]; ST: number[]; N: number
   let y = 20;
   const reps = m.sobol.find((s: any) => s.N === (est?.N ?? 1024));
   return (
-    <svg className="sobol" viewBox="0 0 380 340" role="img" aria-label="Variance split of the Ishigami function into first-order shares and interactions">
+    <svg className="sobol" viewBox="0 0 460 340" role="img" aria-label="Variance split of the Ishigami function into first-order shares and interactions">
       {parts.map((v, i) => {
         const h = v * H, yy = y; y += h;
         return (

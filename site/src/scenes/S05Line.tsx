@@ -56,12 +56,12 @@ function Cards({ m9 }: { m9: any }) {
   const val = (f: string, v: any) => (disp.categories[f]?.[v] ?? (typeof v === "number" ? fmt(v) : String(v)));
   const a = m9.applicants[i], r = m9.results[i];
   return (
-    <div className="cf" data-cf>
-      <ul className="cf-cards" role="radiogroup" aria-label="Applicant">
+    <div className="cf" data-cf tabIndex={0} role="group" aria-label="Counterfactuals">
+      <div className="cf-cards" role="radiogroup" aria-label="Applicant">
         {m9.applicants.map((x: any, k: number) => (
-          <li key={k}><button type="button" role="radio" aria-checked={k === i} className={`chip-btn ${k === i ? "is-on" : ""}`} onClick={() => setI(k)}>APPLICANT {x.row_1based}</button></li>
+          <button key={k} type="button" role="radio" aria-checked={k === i} className={`chip-btn ${k === i ? "is-on" : ""}`} onClick={() => setI(k)}>APPLICANT {x.row_1based}</button>
         ))}
-      </ul>
+      </div>
       <p className="note-line">{fmt(a.duration)} MONTHS · {fmt(a.amount)} DM · {val("checking", a.checking).toUpperCase()} · SAVINGS {val("savings", a.savings).toUpperCase()}</p>
       {r.targets.map((t: any) => (
         <div key={t.target} className="cf-target" data-target={t.target}>
