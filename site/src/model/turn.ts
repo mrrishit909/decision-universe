@@ -1,5 +1,5 @@
 /** The Turn: geometry of one future as a thread, and the cached outcomes of a seeded run under a decision. */
-import { PRESETS, drawInputs, evaluate, summarize, type Draw, type Outcome, type Preset } from "./mc";
+import { PRESETS, drawInputs, evaluate, summarize, triInv, type Draw, type Outcome, type Preset } from "./mc";
 import { Xoshiro128ss } from "./rng";
 
 export const SEED_DEFAULT = 20261011;
@@ -58,4 +58,34 @@ export function runFor(seed: number, n: number, d: Decision): Run {
   if (runCache.size > 12) runCache.delete(runCache.keys().next().value!);
   runCache.set(k, run);
   return run;
+}
+
+/** the recovered share of one future (rec packed 9 per future, years 0..8) at fractional year t */
+export function recAtPacked(rec: ArrayLike<number>, off: number, t: number): number {
+  const i = Math.min(Math.floor(t), 7);
+  const f = t - i;
+  return rec[off + i]! + (rec[off + i + 1]! - rec[off + i]!) * f;
+}
+export interface Polar { cx: number; cy: number; R: number }
+export interface Fall { x0: number; y0: number; w: number; h: number }
+/** FALL x spans 0% to this share of the investment recovered */
+export const FALL_SPAN = 1.8;
+/** the Unroll (VISUAL_DESIGN 0): the point of one thread at year t, u = 0 is the Turn, u = 1 is the waterfall; a straight blend of the two targets */
+export function unrollPoint(rec: ArrayLike<number>, off: number, t: number, u: number, p: Polar, f: Fall): [number, number] {
+  const s = recAtPacked(rec, off, t), th = 2 * Math.PI * s, r = (p.R * t) / 8;
+  const px = p.cx + r * Math.sin(th), py = p.cy - r * Math.cos(th);
+  const fx = f.x0 + (Math.min(s, FALL_SPAN) / FALL_SPAN) * f.w, fy = f.y0 + (t / 8) * f.h;
+  return [px + (fx - px) * u, py + (fy - py) * u];
+}
+
+/** the five readable inputs of future i (the thread inspector): investment, first-year revenue, growth, margin, discount rate */
+export function inputsOf(draws: ArrayLike<number>, i: number, preset: Preset) {
+  const zi = draws[i * 5]!, zr = draws[i * 5 + 1]!, ug = draws[i * 5 + 2]!, zm = draws[i * 5 + 3]!, ur = draws[i * 5 + 4]!;
+  return {
+    investment: Math.exp(Math.log(preset.investment_median) + 0.15 * zi),
+    revenue1: preset.revenue_multiplier * (48 + 8 * zr),
+    growth: triInv(ug, -0.02, 0.06, 0.15),
+    margin: 0.35 + 0.05 * zm,
+    rate: 0.07 + 0.05 * ur,
+  };
 }

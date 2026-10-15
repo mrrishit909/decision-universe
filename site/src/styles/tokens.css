@@ -25,12 +25,12 @@
   --near-black: #080808;
   /* P04's own pair (ED #43; VISUAL_DESIGN section 0): grid blue is the control system (fill only, white text),
      orange is energy in motion. P01-P03 ship light blue / orange, so no pair repeats. */
-  --accent-primary: #192ce4;
-  --accent-secondary: #ff4c25;
+  --accent-primary: #690de2;
+  --accent-secondary: #ffffff;
 
   /* semantic (data honesty tags + states) */
   --tag-observed: #ffffff;
-  --tag-derived: #8fd8f5;
+  --tag-derived: #58b8e1;
   --tag-predicted: #8fa2ff;   /* lighter than --accent-blue so it passes 4.5:1 on black */
   --tag-simulated: var(--accent-orange);
   --tag-synthetic: #b48cff;   /* lighter than --accent-purple for contrast */

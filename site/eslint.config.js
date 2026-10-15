@@ -13,6 +13,8 @@ export default tseslint.config(
     plugins: { "react-hooks": reactHooks },
     rules: { ...reactHooks.configs.recommended.rules },
   },
+  // artifacts are untyped JSON by design; the parity layer reads them as such
+  { files: ["**/*.{ts,tsx}"], rules: { "@typescript-eslint/no-explicit-any": "off" } },
   // tests drive a browser: page.evaluate bodies reference browser globals
   { files: ["tests/**/*.mjs", "*.config.*"], languageOptions: { globals: { ...globals.node, ...globals.browser } } },
 );

@@ -1,21 +1,22 @@
-/** Scene registry (VISUAL_DESIGN 3.1). `pattern` (S00 overlay + S01) is static HTML in index.html so the LCP headline paints before JS. */
+/** Scene registry (VISUAL_DESIGN 3.1). `turn` (S00) is static HTML in index.html so the LCP headline paints before any JS. */
 export interface SceneDef { id: string; code: string; nav: string | null; track: string; landing: number; title: string }
 export const SCENES: SceneDef[] = [
-  { id: "pattern", code: "S01", nav: "PATTERN", track: "200vh", landing: 0.78, title: "A pattern is an overlap that chance can't explain." },
-  { id: "ledger", code: "S02", nav: "THE LEDGER", track: "300vh", landing: 0.1, title: "A million lines, every one counted." },
-  { id: "together", code: "S03a", nav: "TOGETHER", track: "300vh", landing: 0.1, title: "Bought together." },
-  { id: "back", code: "S03b", nav: "COMING BACK", track: "300vh", landing: 0.1, title: "Coming back." },
-  { id: "matters", code: "S04", nav: "WHO MATTERS", track: "300vh", landing: 0.1, title: "From heads to pounds." },
-  { id: "stock", code: "S05", nav: "HOW MANY", track: "300vh", landing: 0.1, title: "How many to stock." },
-  { id: "sells", code: "S06", nav: "WHAT SELLS", track: "300vh", landing: 0.1, title: "What will sell, and who will come back." },
-  { id: "evidence", code: "S07", nav: "EVIDENCE", track: "250vh", landing: 0.05, title: "How we know." },
-  { id: "counter", code: "COUNTER", nav: "THE COUNTER", track: "auto", landing: 0, title: "Put any two things side by side." },
-  { id: "closing", code: "S08", nav: null, track: "200vh", landing: 0.3, title: "The pull, again." },
+  { id: "turn", code: "S00", nav: "FUTURES", track: "150vh", landing: 0, title: "Every decision creates a different future." },
+  { id: "another", code: "S01", nav: "ANOTHER DECISION", track: "250vh", landing: 0.1, title: "Same chance. Another decision. Different futures." },
+  { id: "real", code: "S02", nav: "WHAT IS REAL", track: "300vh", landing: 0.1, title: "What is real, what is invented." },
+  { id: "enough", code: "S03a", nav: "ENOUGH", track: "250vh", landing: 0.05, title: "More futures do not make the future less uncertain." },
+  { id: "learning", code: "S03b", nav: "LEARNING", track: "300vh", landing: 0.05, title: "Evidence narrows a belief." },
+  { id: "unroll", code: "S04", nav: "UNROLL", track: "300vh", landing: 0.05, title: "Unroll the turn, and time falls." },
+  { id: "line", code: "S05", nav: "THE LINE", track: "300vh", landing: 0.05, title: "Where you draw the line depends on what a mistake costs." },
+  { id: "trade", code: "S06", nav: "TRADE-OFFS", track: "300vh", landing: 0.05, title: "Some trade-offs are efficient. Most inputs are not what matters." },
+  { id: "unchosen", code: "S07", nav: "UNCHOSEN", track: "300vh", landing: 0.05, title: "The future you didn't choose cannot be observed." },
+  { id: "lab", code: "LAB", nav: "THE LAB", track: "auto", landing: 0, title: "Ten instruments, in your browser." },
+  { id: "closing", code: "S08", nav: null, track: "200vh", landing: 0.3, title: "Every decision creates a different future." },
 ];
 export const NAV_ITEMS = SCENES.filter((s) => s.nav).map((s) => ({ id: s.id, label: s.nav! }));
-export const navActive = (scene: string | null) => (scene === "closing" ? "counter" : scene ?? "pattern");
-export const sceneIndex = (id: string) => SCENES.findIndex((s) => s.id === id);
+export const navActive = (scene: string | null) => (scene === "closing" ? "lab" : scene ?? "turn");
 export const LINKS = {
-  site: "https://mrrishit909.github.io/retail-intelligence-studio/",
-  source: "https://github.com/mrrishit909/retail-intelligence-studio",
+  site: "https://mrrishit909.github.io/decision-universe/",
+  source: "https://github.com/mrrishit909/decision-universe",
 } as const;
+export const sceneIndex = (id: string) => SCENES.findIndex((s) => s.id === id);

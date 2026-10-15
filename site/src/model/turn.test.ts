@@ -27,3 +27,20 @@ describe("the Turn", () => {
     expect(Math.abs(r.lossShare - m3.run.p_loss)).toBeLessThan(1e-9);
   });
 });
+import { unrollPoint, recAtPacked } from "./turn";
+describe("the Unroll", () => {
+  const r = runFor(SEED_DEFAULT, 8, DECISIONS[0]!).outcomes[3]!;
+  const rec = Float32Array.from(r.recovered);
+  const p = { cx: 700, cy: 400, R: 300 }, f = { x0: 100, y0: 50, w: 800, h: 600 };
+  it("u = 0 lies on the polar target and u = 1 on the cartesian target", () => {
+    for (const t of [1, 3.5, 8]) {
+      const s = recAtPacked(rec, 0, t);
+      const [x0, y0] = unrollPoint(rec, 0, t, 0, p, f);
+      expect(x0).toBeCloseTo(p.cx + ((p.R * t) / 8) * Math.sin(2 * Math.PI * s), 6);
+      expect(y0).toBeCloseTo(p.cy - ((p.R * t) / 8) * Math.cos(2 * Math.PI * s), 6);
+      const [x1, y1] = unrollPoint(rec, 0, t, 1, p, f);
+      expect(x1).toBeCloseTo(f.x0 + (Math.min(s, 1.8) / 1.8) * f.w, 6);
+      expect(y1).toBeCloseTo(f.y0 + (t / 8) * f.h, 6);
+    }
+  });
+});

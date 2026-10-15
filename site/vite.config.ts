@@ -2,6 +2,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { statSync } from "node:fs";
 
 export default defineConfig({
   base: "/decision-universe/",
@@ -10,6 +11,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: { target: "es2022", sourcemap: false },
   worker: { format: "es" },
+  // raw wasm size for honest byte progress when the server compresses
+  define: { __HIGHS_WASM_BYTES__: statSync(new URL("./node_modules/highs/build/highs.wasm", import.meta.url)).size },
   preview: { port: 4401, strictPort: true },
   test: { include: ["src/**/*.test.ts"], environment: "node", testTimeout: 120_000 },
 });

@@ -10,3 +10,10 @@
 - **Sobol (module 8):** estimator noise at N=256 is large; the table shows it. SALib is used only as a cross-check.
 - **Precomputed vs live:** coverage studies, bootstraps, sklearn model fitting and NSW estimators are precomputed in Python and must be labelled precomputed on the site. Live in the browser: modules 1-5, 7, 8, 9 (search), 10 (synthetic), and the module 6 curve/optimum from published probabilities.
 - **Not verified here:** the TypeScript ports (frontend task). Cross-language reproducibility is demonstrated only for the PRNG (Node check).
+
+- **Browser layer:** the Turn draws 500 to 1,200 of the 20,000 futures (the ledger says `n_drawn OF n`; statistics use all of them).
+  Threads assume cash arrives evenly within a year; the model pays at year end. The waterfall clips at 180% recovered.
+- **HiGHS in the browser** is a 3.5 MB WebAssembly download created only at S06 or a LAB solve; if it cannot load, S06 shows the
+  precomputed front and says so.
+- **Parity** is claimed only where a published vector exists for the seed in use. At any other seed the site says so and shows no MATCH.
+- **Visual QA** for this release was an orchestrator read of real screenshots, not a separate independent agent.
