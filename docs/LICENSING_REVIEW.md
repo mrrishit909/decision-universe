@@ -1,6 +1,6 @@
 # Licensing review: NSW / PSID data in S07 (2026-10-14)
 
-Status: KEEP PROVISIONALLY (owner decision 2026-10-14). No restricted row-level content is shipped.
+Status: KEEP PROVISIONALLY (owner decision 2026-10-14, reconfirmed). The licence scope and the non-commercial fit are UNRESOLVED; derived aggregates are not asserted to be exempt from upstream restrictions. If authoritative information shows this use is prohibited, S07 is to be removed or replaced. No restricted row-level content is shipped.
 
 ## Source and exact terms
 - Page: https://users.nber.org/~rdehejia/nswdata2.html (Rajeev Dehejia's page hosted by NBER; fetched 2026-10-14).
